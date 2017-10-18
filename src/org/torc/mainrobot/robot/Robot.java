@@ -164,9 +164,9 @@ public class Robot extends IterativeRobot {
 			break;
 		
 		}
-		// Write to smartDashboard
+		// Write the gear state to smartDashboard
 		SmartDashboard.putString("Gear State", soleState);
-		SmartDashboard.putNumber("TestData 1", 123);
+
 	}
 
 	/**

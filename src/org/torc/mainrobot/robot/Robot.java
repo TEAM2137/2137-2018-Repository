@@ -3,17 +3,9 @@ package org.torc.mainrobot.robot;
 
 import org.torc.mainrobot.robot.commands.ExampleCommand;
 import org.torc.mainrobot.robot.subsystems.ExampleSubsystem;
-
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID;
+import org.torc.mainrobot.program.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,16 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
-	public static OI oi;
 	
-	XboxController xController0 = new XboxController(0);
-
-	Talon frontLeft, frontRight, rearLeft, rearRight;
-	
-	DoubleSolenoid shifter;
-	
-	RobotDrive myRobot;
-
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -47,23 +30,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		oi = new OI();
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
-		
-		shifter = new DoubleSolenoid(0, 0, 1);
-	    frontLeft = new Talon(0);
-	    frontRight = new Talon(1);
-	    rearLeft = new Talon (2);
-	    rearRight = new Talon (3);
-	    myRobot = new RobotDrive(frontLeft, rearLeft, frontRight, rearRight);
-	    System.out.println("CALLED ROBOTDRIVE CONSTRUCTOR");
-	    myRobot.setExpiration(0.1);
-	    Compressor compress = new Compressor(0);
-	    // Set compressor status to automatically 
-	    // refill the compressor tank when below 120psi
-	    compress.setClosedLoopControl(true);
+		// Call Robot Initialization from the Program package.
+		RobotInit.Init();
 	}
 
 	/**
@@ -73,12 +44,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-
+		Disabled.Init();
 	}
 
 	@Override
 	public void disabledPeriodic() {
-		Scheduler.getInstance().run();
+		Disabled.Periodic();
 	}
 
 	/**
@@ -106,6 +77,7 @@ public class Robot extends IterativeRobot {
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
 			autonomousCommand.start();
+		Auton.Init();
 	}
 
 	/**
@@ -113,7 +85,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		Scheduler.getInstance().run();
+		Auton.Periodic();
 	}
 
 	@Override
@@ -126,7 +98,7 @@ public class Robot extends IterativeRobot {
 			autonomousCommand.cancel();
 		}
 		
-		myRobot.setSafetyEnabled(true);
+		Teleop.Init();
 	}
 
 	/**
@@ -134,41 +106,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
-		
-		myRobot.tankDrive(xController0.getY(GenericHID.Hand.kLeft), xController0.getY(GenericHID.Hand.kRight));
-		
-		if (xController0.getBumper(Hand.kLeft)) {
-			// Forward is Low Gear
-			shifter.set(DoubleSolenoid.Value.kForward);
-		}
-		
-		else if (xController0.getBumper(Hand.kRight)) {
-			// Reverse is High Gear
-			shifter.set(DoubleSolenoid.Value.kReverse);	
-		}
-		
-		String soleState = "";
-		
-		switch (shifter.get()) {
-		case kReverse:
-			soleState = "High";
-			break;
-			
-		case kForward:
-			soleState = "Low";
-			break;
-			
-		default:
-			soleState = "Other";
-			break;
-		
-		}
-		// Write the gear state to smartDashboard
-		SmartDashboard.putString("Gear State", soleState);
-
+		Teleop.Periodic();
 	}
 
+	
 	/**
 	 * This function is called periodically during test mode
 	 */

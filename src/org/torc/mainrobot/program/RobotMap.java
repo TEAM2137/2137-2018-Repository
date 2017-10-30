@@ -1,4 +1,9 @@
-package org.torc.mainrobot.robot;
+package org.torc.mainrobot.program;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Talon;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -16,4 +21,11 @@ public class RobotMap {
 	// number and the module. For example you with a rangefinder:
 	// public static int rangefinderPort = 1;
 	// public static int rangefinderModule = 1;
+	public static Talon frontLeft, frontRight, rearLeft, rearRight;
+	
+	public static DoubleSolenoid shifter;
+	
+	public static RobotDrive myRobot;
+	
+	public static Encoder encoderL, encoderR;
 }

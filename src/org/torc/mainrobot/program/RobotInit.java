@@ -1,5 +1,7 @@
 package org.torc.mainrobot.program;
 
+import org.torc.mainrobot.robot.subsystems.DriveTrain;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -23,12 +25,26 @@ public class RobotInit {
 	    RobotMap.frontRight = new Talon(1);
 	    RobotMap.rearLeft = new Talon (2);
 		RobotMap.rearRight = new Talon (3);
+		// Add talons to list
+		RobotMap.talonList.add(RobotMap.frontLeft);
+		RobotMap.talonList.add(RobotMap.frontRight);
+		RobotMap.talonList.add(RobotMap.rearLeft);
+		RobotMap.talonList.add(RobotMap.rearRight);
+		
 		RobotMap.myRobot = new RobotDrive(RobotMap.frontLeft, 
 		RobotMap.rearLeft, 
 		RobotMap.frontRight, 
 		RobotMap.rearRight);
 		System.out.println("CALLED ROBOTDRIVE CONSTRUCTOR");
-		RobotMap.myRobot.setExpiration(0.1);
+		// Flip left motors
+		RobotMap.myRobot.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+		RobotMap.myRobot.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+		// TODO: Look into setSafetyEnabled
+		RobotMap.myRobot.setSafetyEnabled(false);
+		RobotMap.driveTrainSubSys = new DriveTrain();
+		
+		// TODO: Reset expiration
+		//RobotMap.myRobot.setExpiration(0.1);
 		Compressor compress = new Compressor(0);
 		// Set compressor status to automatically 
 		// refill the compressor tank when below 120psi

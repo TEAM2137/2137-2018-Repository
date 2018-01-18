@@ -3,19 +3,23 @@ package org.torc.mainrobot.program;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.torc.mainrobot.tools.EncoderExtra;
 
 public class Teleop {
 	
 	public static void Init() {
-		RobotMap.myRobot.setSafetyEnabled(true);
+		//RobotMap.myRobot.setSafetyEnabled(true);
 	}
 	
 	public static void Periodic() {
-		Scheduler.getInstance().run();
+		// Testing Encoder Tracking
 		
-		RobotMap.myRobot.tankDrive(ButtonMap.xController0.getY(GenericHID.Hand.kLeft), ButtonMap.xController0.getY(GenericHID.Hand.kRight));
+		//EncoderExtra encTest = new EncoderExtra(RobotMap.encoderL);
+		
+		//encTest.startTracking();
+		
+		RobotMap.driveTrainSubSys.tankDrive(-ButtonMap.xController0.getY(GenericHID.Hand.kLeft), ButtonMap.xController0.getY(GenericHID.Hand.kRight));
 		
 		if (ButtonMap.xController0.getBumper(Hand.kLeft)) {
 			// Forward is Low Gear
@@ -45,9 +49,11 @@ public class Teleop {
 		}
 		// Write the gear state to smartDashboard
 		SmartDashboard.putString("Gear State", soleState);
+		SmartDashboard.putNumber("Left Encoder Rotations", RobotMap.encoderL.getDistance());
+		SmartDashboard.putNumber("Right Encoder Rotations", RobotMap.encoderR.getDistance());
+		SmartDashboard.putNumber("Left Encoder Disatance", EncoderExtra.EncoderDistance(RobotMap.WheelDiameter, RobotMap.encoderL.getDistance()));
+		SmartDashboard.putNumber("Left Encoder RPM?", RobotMap.encoderL.getRate());
+		SmartDashboard.putNumber("Right Encoder RPM?", RobotMap.encoderR.getRate());
 		
-		SmartDashboard.putNumber("Left Encoder", RobotMap.encoderL.getDistance());
-		SmartDashboard.putNumber("Right Encoder", RobotMap.encoderR.getDistance());
-
 	}
 }

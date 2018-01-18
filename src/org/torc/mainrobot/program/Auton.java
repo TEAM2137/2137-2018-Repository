@@ -1,13 +1,26 @@
 package org.torc.mainrobot.program;
 
-import edu.wpi.first.wpilibj.command.Scheduler;
+import org.torc.mainrobot.robot.commands.*;
 
 public class Auton {
+	
+	//static MoveCommand moveCom;
+	
 	public static void Init() {
 		
+		/*
+		MoveCommand moveCom = new MoveCommand(8, 0.2F, RobotMap.encoderL);
+		moveCom.start();
+		*/
+		
+		// Test Auton Code
+		MotorDrive drivCom = new MotorDrive();
+		drivCom.start();
+		
+
 	}
 	
 	public static void Periodic() {
-		Scheduler.getInstance().run();
+		//RobotMap.driveTrainSubSys.tankDrive(-0.5, 0.5);
 	}
 }

@@ -1,7 +1,13 @@
 package org.torc.mainrobot.program;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.torc.mainrobot.robot.subsystems.*;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PWMSpeedController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Talon;
 
@@ -22,10 +28,17 @@ public class RobotMap {
 	// public static int rangefinderPort = 1;
 	// public static int rangefinderModule = 1;
 	public static Talon frontLeft, frontRight, rearLeft, rearRight;
+	// A list which is supposed to be populated with the above Talons on init. 
+	// TODO: Garuntee that we need this
+	public static List<PWMSpeedController> talonList = new ArrayList<>();
 	
 	public static DoubleSolenoid shifter;
 	
 	public static RobotDrive myRobot;
 	
+	public static DriveTrain driveTrainSubSys;
+	
 	public static Encoder encoderL, encoderR;
+	
+	public static float WheelDiameter = 4F;
 }

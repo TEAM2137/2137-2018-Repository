@@ -1,6 +1,6 @@
 package org.torc.mainrobot.robot.commands;
 
-import org.torc.mainrobot.robot.Robot;
+import org.torc.mainrobot.program.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 
-public class ExampleCommand extends Command {
+public class MotorDrive extends Command {
 	
-	public ExampleCommand() {
+	public MotorDrive() {
 		// Use requires() here to declare subsystem dependencies
-		requires(Robot.exampleSubsystem);
+		requires(RobotMap.driveTrainSubSys);
 	}
 
 	// Called just before this Command runs the first time
@@ -23,6 +23,8 @@ public class ExampleCommand extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
+		RobotMap.driveTrainSubSys.tankDrive(0.5, 0.5);
+		System.out.println("TankDrive Call");
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

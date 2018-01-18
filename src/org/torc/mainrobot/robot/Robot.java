@@ -6,6 +6,7 @@ import org.torc.mainrobot.robot.subsystems.ExampleSubsystem;
 import org.torc.mainrobot.program.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,17 +25,24 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
-	/**
+	/*
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
+		
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		// Call Robot Initialization from the Program package.
 		RobotInit.Init();
+	}
+	
+	@Override
+	public void robotPeriodic() {
+		// Manually call the Scheduler "run" command.
+		Scheduler.getInstance().run();
 	}
 
 	/**
@@ -77,6 +85,7 @@ public class Robot extends IterativeRobot {
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
 			autonomousCommand.start();
+		
 		Auton.Init();
 	}
 
@@ -85,6 +94,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		/* Must be called often to have commands function properly in a non-
+		 * command based robot.
+		 */
+		//Scheduler.getInstance().run();
+		
 		Auton.Periodic();
 	}
 
@@ -106,6 +120,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		/* Must be called often to have commands function properly in a non-
+		 * command based robot.
+		 */
+		//Scheduler.getInstance().run();
+		
 		Teleop.Periodic();
 	}
 
@@ -115,6 +134,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		/* Must be called often to have commands function properly in a non-
+		 * command based robot.
+		 */
+		//Scheduler.getInstance().run();
+		
 		LiveWindow.run();
 	}
+	
 }

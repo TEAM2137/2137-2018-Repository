@@ -1,9 +1,13 @@
 package org.torc.mainrobot.program;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.torc.mainrobot.robot.subsystems.*;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,6 +22,7 @@ import edu.wpi.first.wpilibj.Talon;
  * floating around.
  */
 public class RobotMap {
+	/*
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;
@@ -41,4 +46,12 @@ public class RobotMap {
 	public static Encoder encoderL, encoderR;
 	
 	public static float WheelDiameter = 4F;
+	*/
+	
+	public static Elevator ElevSubsystem;
+	
+	public static int Elev_TimeoutMs = 10;
+	public static int Elev_SlotIdx = 0;
+	public static int Elev_PIDLoopIdx = 0;
+	
 }

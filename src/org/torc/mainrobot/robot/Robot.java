@@ -3,6 +3,10 @@ package org.torc.mainrobot.robot;
 
 import org.torc.mainrobot.robot.commands.ExampleCommand;
 import org.torc.mainrobot.robot.subsystems.ExampleSubsystem;
+
+import java.awt.List;
+import java.util.ArrayList;
+
 import org.torc.mainrobot.program.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -24,7 +28,13 @@ public class Robot extends IterativeRobot {
 	
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
+	
+	private static ArrayList<InheritedPeriodic> PeriodicList = new ArrayList<InheritedPeriodic>();
 
+	public static void AddToPeriodic(InheritedPeriodic toAdd) {
+		PeriodicList.add(toAdd);
+	}
+	
 	/*
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -36,13 +46,18 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		// Call Robot Initialization from the Program package.
-		RobotInit.Init();
+		RobotMode.Init();
 	}
 	
 	@Override
 	public void robotPeriodic() {
 		// Manually call the Scheduler "run" command.
 		Scheduler.getInstance().run();
+		// Call all perodic funtions in PeriodicList
+		for(InheritedPeriodic per : PeriodicList) {
+			per.Periodic();
+		}
+		RobotMode.Periodic();
 	}
 
 	/**
@@ -52,12 +67,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-		Disabled.Init();
+		DisabledMode.Init();
 	}
 
 	@Override
 	public void disabledPeriodic() {
-		Disabled.Periodic();
+		DisabledMode.Periodic();
 	}
 
 	/**
@@ -86,7 +101,7 @@ public class Robot extends IterativeRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.start();
 		
-		Auton.Init();
+		AutonMode.Init();
 	}
 
 	/**
@@ -99,7 +114,7 @@ public class Robot extends IterativeRobot {
 		 */
 		//Scheduler.getInstance().run();
 		
-		Auton.Periodic();
+		AutonMode.Periodic();
 	}
 
 	@Override
@@ -112,7 +127,7 @@ public class Robot extends IterativeRobot {
 			autonomousCommand.cancel();
 		}
 		
-		Teleop.Init();
+		TeleopMode.Init();
 	}
 
 	/**
@@ -125,7 +140,7 @@ public class Robot extends IterativeRobot {
 		 */
 		//Scheduler.getInstance().run();
 		
-		Teleop.Periodic();
+		TeleopMode.Periodic();
 	}
 
 	
@@ -140,6 +155,13 @@ public class Robot extends IterativeRobot {
 		//Scheduler.getInstance().run();
 		
 		LiveWindow.run();
+		
+		TestMode.Periodic();
+	}
+	
+	@Override
+	public void testInit() {
+		TestMode.Init();
 	}
 	
 }

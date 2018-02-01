@@ -10,23 +10,30 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class Elevator_Control extends Command {
 	
+	/**
+	 * The calling Subsystem of the command.
+	 */
+	public Elevator elevSubsystem;
+	
 	public enum elevatorControlMode { jogging, position, none }
 	
 	elevatorControlMode controlMode = elevatorControlMode.jogging;
 	
 	boolean doneRunning = false;
 	
-	public Elevator_Control() {
+	int jogInterval = 7000;
+	
+	public Elevator_Control(Elevator elevator) {
 		// Use requires() here to declare subsystem dependencies
-		requires(RobotMap.ElevSubsystem);
+		elevSubsystem = elevator;
+		requires(elevSubsystem);
 	}
 
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		
 	}
-
-	boolean tempBool = false;
 	
 	// Called repeatedly when this Command is scheduled to run
 	@Override
@@ -34,57 +41,40 @@ public class Elevator_Control extends Command {
 		// Check if mode change
 		
 		// To Position
-		if (ButtonMap.xController0.getAButton()) {
+		if (RobotMap.xController0.getAButtonPressed()) {
 			controlMode = elevatorControlMode.position;
-			//RobotMap.elevSubsystem.positionElevator(10000);
 		}
 		// To Jogging
-		else if (ButtonMap.xController0.getBButton()) {
+		else if (RobotMap.xController0.getBButtonPressed()) {
 			controlMode = elevatorControlMode.jogging;
+		}
+		
+		if (RobotMap.xController0.getXButtonPressed()) {
+			
 		}
 		
 		switch(controlMode) {
 			case jogging:
-				int jogInterval = 7000; 
-				
-				if(ButtonMap.xController0.getBumper(GenericHID.Hand.kRight)) {
-					if (!tempBool) {
-						tempBool = true;
-						System.out.println("Jogging Right Bumper");
-						// TODO: In the midst of fixing this 
-						//targetPosition += jogInterval;
-					}
+				if(RobotMap.xController0.getBumperPressed(GenericHID.Hand.kRight)) {
+					System.out.println("Jogging Right Bumper");
+					// TODO: Test this with the elevator.
+					elevSubsystem.jogElevatorPos(jogInterval);
 				}
-				else if (ButtonMap.xController0.getBumper(GenericHID.Hand.kLeft)) {
-					if (!tempBool) {
-						tempBool = true;
-						System.out.println("Jogging Left Bumper");
-						//targetPosition -= jogInterval;
-					}
+				else if (RobotMap.xController0.getBumperPressed(GenericHID.Hand.kLeft)) {
+					System.out.println("Jogging Left Bumper");
+					//targetPosition -= jogInterval;
+					elevSubsystem.jogElevatorPos(-jogInterval);
 				}
-				else {
-					tempBool = false;
-				}
-				//RobotMap.ElevSubsystem.positionElevator(targetPosition);
 				break;
 			case position:
-				if(ButtonMap.xController0.getBumper(GenericHID.Hand.kRight)) {
-					if (!tempBool) {
-						tempBool = true;
-						RobotMap.ElevSubsystem.elevatorPosition = Elevator.ElevatorPositions.values()[(int) MathExtra.clamp(RobotMap.ElevSubsystem.elevatorPosition.ordinal() + 1, 0, Elevator.ElevatorPositions.values().length-1)];
-					}
+				if(RobotMap.xController0.getBumperPressed(GenericHID.Hand.kRight)) {
+					elevSubsystem.jogElevatorPosInc(1);
 				}
-				else if (ButtonMap.xController0.getBumper(GenericHID.Hand.kLeft)) {
-					if (!tempBool) {
-						tempBool = true;
-						RobotMap.ElevSubsystem.elevatorPosition = Elevator.ElevatorPositions.values()[(int) MathExtra.clamp(RobotMap.ElevSubsystem.elevatorPosition.ordinal() - 1, 0, Elevator.ElevatorPositions.values().length-1)];
-					}
-				}
-				else {
-					tempBool = false;
+				else if (RobotMap.xController0.getBumperPressed(GenericHID.Hand.kLeft)) {
+					elevSubsystem.jogElevatorPosInc(-1);
 				}
 				
-				RobotMap.ElevSubsystem.positionFind(RobotMap.ElevSubsystem.elevatorPosition);
+				elevSubsystem.positionFind(elevSubsystem.elevatorPosition);
 				break;
 			default:
 				break;

@@ -15,8 +15,7 @@ public class TeleopMode {
 	
 	public static void Init() {
 		//RobotMap.myRobot.setSafetyEnabled(true);
-		Elevator_Init elevInit = new Elevator_Init();
-		elevInit.start();
+		RobotMap.ElevSubsystem.initElevator();
 	}
 	
 	public static void Periodic() {

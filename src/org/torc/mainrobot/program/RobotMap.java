@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWMSpeedController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -53,5 +54,7 @@ public class RobotMap {
 	public static int Elev_TimeoutMs = 10;
 	public static int Elev_SlotIdx = 0;
 	public static int Elev_PIDLoopIdx = 0;
+	
+	public static XboxController xController0 = new XboxController(0);
 	
 }

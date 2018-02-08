@@ -4,14 +4,12 @@ package org.torc.mainrobot.robot;
 import org.torc.mainrobot.robot.commands.ExampleCommand;
 import org.torc.mainrobot.robot.subsystems.ExampleSubsystem;
 
-import java.awt.List;
 import java.util.ArrayList;
 
 import org.torc.mainrobot.program.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -153,8 +151,6 @@ public class Robot extends IterativeRobot {
 		 * command based robot.
 		 */
 		//Scheduler.getInstance().run();
-		
-		LiveWindow.run();
 		
 		TestMode.Periodic();
 	}

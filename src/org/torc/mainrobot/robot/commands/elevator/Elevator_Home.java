@@ -1,6 +1,5 @@
 package org.torc.mainrobot.robot.commands.elevator;
 
-import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;

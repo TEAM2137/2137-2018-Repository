@@ -1,11 +1,6 @@
 package org.torc.mainrobot.program;
 
-
 import org.torc.mainrobot.robot.subsystems.Elevator;
-import org.torc.mainrobot.tools.MotorControllers;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.XboxController;
 

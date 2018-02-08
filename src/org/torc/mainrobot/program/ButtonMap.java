@@ -12,29 +12,63 @@ public class ButtonMap {
 	
 	XboxController xController;
 	
-	public enum RControllerButtons { elevatorUp, elevatorDown }
-	public enum RControllerAxis { leftX, leftY, rightX, rightY }
+	public enum RCButtons { elevatorUp, elevatorDown, positionMode, joggingMode, triTestMode }
+	public enum RCAxis { leftX, leftY, rightX, rightY }
 	
 	public ButtonMap(XboxController controller) {
 		xController = controller;
 	}
 	
-	public boolean getButton(RControllerButtons button, boolean pressed) {
+	public boolean getButton(RCButtons button, boolean pressed) {
 		boolean toReturn = false;
 		
 		switch (button) {
 			case elevatorUp:
-				toReturn = xController.getBumper(Hand.kRight);
+				if (pressed) {
+					toReturn = xController.getBumperPressed(Hand.kRight);
+				}
+				else {
+					toReturn = xController.getBumper(Hand.kRight);
+				}
 				break;
 			case elevatorDown:
-				toReturn = xController.getBumper(Hand.kLeft);
+				if (pressed) {
+					toReturn = xController.getBumperPressed(Hand.kLeft);
+				}
+				else {
+					toReturn = xController.getBumper(Hand.kLeft);
+				}
+				break;
+			case positionMode:
+				if (pressed) {
+					toReturn = xController.getAButtonPressed();
+				}
+				else {
+					toReturn = xController.getAButton();
+				}
+				break;
+			case joggingMode:
+				if (pressed) {
+					toReturn = xController.getBButtonPressed();
+				}
+				else {
+					toReturn = xController.getBButton();
+				}
+				break;
+			case triTestMode:
+				if (pressed) {
+					toReturn = xController.getXButtonPressed();
+				}
+				else {
+					toReturn = xController.getXButton();
+				}
 				break;
 		}
 		
 		return toReturn;
 	}
 	
-	public double getAxis(RControllerAxis axis) {
+	public double getAxis(RCAxis axis) {
 		double toReturn = 0;
 		
 		switch (axis) {

@@ -1,13 +1,15 @@
 package org.torc.mainrobot.robot.subsystems;
 
+import org.torc.mainrobot.program.ButtonMap;
 import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.InheritedPeriodic;
-import org.torc.mainrobot.robot.commands.elevator.Elevator_Init;
+import org.torc.mainrobot.robot.commands.elevator.Elevator_Home;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -31,7 +33,9 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	int targetPosition = 0;
 	
-	public boolean hasBeenHomed = false;
+	boolean hasBeenHomed = false;
+	
+	Elevator_Home elevHomer;
 	
 	public Elevator() {
 		// Add to periodic list
@@ -54,30 +58,54 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	 * Initializes the elevator for use. This will home, and arm the elevator for use.
 	 * Do not call this from the same elevator subsystem constructor.
 	 */
+	/*
 	public void initElevator() {
 		try {
-			Elevator_Init initGroup = new Elevator_Init(this);
+			Elevator_Init initGroup = new Elevator_Init(this, buttonMap);
 			initGroup.start();
 		}
 		catch (IllegalArgumentException exception) {
 			System.out.println("Cannot call initElevator; " + exception.getMessage());
 		}
 	}
+	*/
 	
 	private static int GetElevatorPositions(ElevatorPositions position) {
 		int toReturn = 0;
 		switch(position) {
 			case floor:
-				toReturn = 44135;
+				toReturn = 35695;
 				break;
 			case middle:
-				toReturn = 96199;
+				toReturn = 87736;
 				break;
 			case high:
-				toReturn = 146892;
+				toReturn = 138080;
 				break;
 		}
 		return toReturn;
+	}
+	
+	public void homeElevator() {
+		if (hasBeenHomed) {
+			deHome();
+		}
+		elevHomer = new Elevator_Home(this);
+		elevHomer.start();
+	}
+	
+	
+	/**
+	 * Sets the elevator's state to "unHomed", requiring 
+	 * another homing to work again.
+	 */
+	public void deHome() {
+		hasBeenHomed = false;
+		System.out.println("Elevator De-Homed!!");
+	}
+	
+	public boolean getHomed() {
+		return hasBeenHomed;
 	}
 	
 	public void jogElevatorPerc(double controllerVal) {
@@ -85,7 +113,14 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void positionFind(ElevatorPositions position) {
-		elevator.set(ControlMode.Position, MathExtra.clamp(GetElevatorPositions(position), 0, maxSoftLimit));
+		if (!hasBeenHomed) {
+			hasNotHomedAlert();
+			return;
+		}
+		int targPos = GetElevatorPositions(position);
+		targetPosition = targPos;
+		elevatorPosition = position;
+		elevator.set(ControlMode.Position, MathExtra.clamp(targPos, 0, maxSoftLimit));
 	}
 	
 	public void zeroEncoder() {
@@ -102,12 +137,26 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void jogElevatorPos(double positionInc) {
+		if (!hasBeenHomed) {
+			hasNotHomedAlert();
+			return;
+		}
 		targetPosition += positionInc;
-		elevator.set(ControlMode.Position, MathExtra.clamp(targetPosition, 0, maxSoftLimit));
+		targetPosition = MathExtra.clamp(targetPosition, 0, maxSoftLimit);
+		elevator.set(ControlMode.Position, targetPosition);
 	}
 	
 	public void jogElevatorPosInc(int increment) {
+		if (!hasBeenHomed) {
+			hasNotHomedAlert();
+			return;
+		}
 		elevatorPosition = Elevator.ElevatorPositions.values()[(int) MathExtra.clamp(elevatorPosition.ordinal() + increment, 0, Elevator.ElevatorPositions.values().length-1)];
+		positionFind(elevatorPosition);
+	}
+	
+	static void hasNotHomedAlert() {
+		System.out.println("Cannot move Elevator; has not homed!!");
 	}
 	
 	/*
@@ -142,8 +191,14 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	@Override
 	public void Periodic() {
+		if (!hasBeenHomed && elevHomer != null && elevHomer.isFinished()) {
+			System.out.println("Elevator Homed!!");
+			elevHomer.free();
+			elevHomer = null;
+			hasBeenHomed = true;
+		}
+		// Print Encoders
 		printEncoder();
-		//checkSoftLimits();
 
 	}
 	

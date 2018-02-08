@@ -5,6 +5,9 @@ import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.tools.MotorControllers;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+
+import edu.wpi.first.wpilibj.XboxController;
 
 //import org.torc.mainrobot.robot.subsystems.DriveTrain;
 
@@ -52,7 +55,11 @@ public class RobotMode {
 		compress.setClosedLoopControl(true);
 		*/		
 		
+		RobotMap.mainController = new ButtonMap(new XboxController(0));
+		
 		RobotMap.ElevSubsystem = new Elevator();
+		
+		
 	}
 	
 	public static void Periodic() {

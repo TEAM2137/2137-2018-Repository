@@ -60,14 +60,14 @@ public class Elevator_Home extends Command {
 
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
-	protected boolean isFinished() {
+	public boolean isFinished() {
 		return doneRunning;
 	}
 
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		elevSubsystem.hasBeenHomed = true;
+		
 	}
 
 	// Called when another command which requires one or more of the same

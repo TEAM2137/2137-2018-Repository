@@ -9,7 +9,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	public enum ElevatorStates { jogging, position, triScale }
 	public ElevatorStates elevState = ElevatorStates.jogging;
 	
-	static int jogInterval = 7000;
+	static int jogInterval = 200;
 	
 	Elevator_TriScale triScale;
 	

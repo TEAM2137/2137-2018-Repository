@@ -37,6 +37,8 @@ public class RobotMap {
 	public static float WheelDiameter = 4F;
 	*/
 	
+	public static DriveTrain DriveSubsystem;
+	
 	public static Elevator ElevSubsystem;
 	
 	public static int Elev_TimeoutMs = 10;

@@ -17,8 +17,8 @@ public class Elevator_Home extends Command {
 	
 	boolean doneRunning = false;
 	
-	double firstMoveDownPerc = 0.05;
-	double secondMoveUpPerc = 0.05;
+	double firstMoveDownPerc = 0.3;
+	double secondMoveUpPerc = 0.3;
 	
 	public Elevator_Home(Elevator elevator) {
 		// Use requires() here to declare subsystem dependencies

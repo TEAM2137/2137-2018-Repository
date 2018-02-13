@@ -25,7 +25,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private TalonSRX elevator;
 	
-	public static int maxSoftLimit = 155880;
+	public static int maxSoftLimit = 25287;
 	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;
@@ -36,55 +36,45 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	Elevator_Home elevHomer;
 	
-	public Elevator() {
+	public Elevator(int talonPort, int endstopPort) {
 		// Add to periodic list
 		org.torc.mainrobot.robot.Robot.AddToPeriodic(this);
 		
-		elevator = new TalonSRX(3);
+		elevator = new TalonSRX(talonPort);
 		// Invert motor phase
 		//elevator.setInverted(true);
-		MotorControllers.TalonSRXConfig(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_SlotIdx, RobotMap.Elev_PIDLoopIdx);
+		MotorControllers.TalonSRXConfig(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_SlotIdx, RobotMap.Elev_PIDLoopIdx, 0, 0.1, 0, 0);
 		
-		endstop = new DigitalInput(0);
+		// Invert elev encoder
+		elevator.setSensorPhase(false);
+		
+		endstop = new DigitalInput(endstopPort);
 		cubeInput = new DigitalInput(1);
 		
-        elevator.configPeakOutputForward(0.5, RobotMap.Elev_TimeoutMs);
-        elevator.configPeakOutputReverse(-0.5, RobotMap.Elev_TimeoutMs);
+        elevator.configPeakOutputForward(1, RobotMap.Elev_TimeoutMs);
+        elevator.configPeakOutputReverse(-1, RobotMap.Elev_TimeoutMs);
 	}
-	
-	
-	/**
-	 * Initializes the elevator for use. This will home, and arm the elevator for use.
-	 * Do not call this from the same elevator subsystem constructor.
-	 */
-	/*
-	public void initElevator() {
-		try {
-			Elevator_Init initGroup = new Elevator_Init(this, buttonMap);
-			initGroup.start();
-		}
-		catch (IllegalArgumentException exception) {
-			System.out.println("Cannot call initElevator; " + exception.getMessage());
-		}
-	}
-	*/
 	
 	private static int GetElevatorPositions(ElevatorPositions position) {
 		int toReturn = 0;
 		switch(position) {
 			case floor:
-				toReturn = 35695;
+				toReturn = 2436;
 				break;
 			case middle:
-				toReturn = 87736;
+				toReturn = 11745;
 				break;
 			case high:
-				toReturn = 138080;
+				toReturn = 25287;
 				break;
 		}
 		return toReturn;
 	}
 	
+	/**
+	 * Initializes the elevator for use. This will home, and arm the elevator for use.
+	 * Do not call this from the same elevator subsystem constructor.
+	 */	
 	public void homeElevator() {
 		if (hasBeenHomed) {
 			deHome();
@@ -112,6 +102,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void positionFind(ElevatorPositions position) {
+		System.out.println("Finding position: " + position.name());
 		if (!hasBeenHomed) {
 			hasNotHomedAlert();
 			return;

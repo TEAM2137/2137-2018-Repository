@@ -1,5 +1,8 @@
 package org.torc.mainrobot.program;
 
+import org.torc.mainrobot.teleopcontrols.DriveTrain_Teleop;
+import org.torc.mainrobot.teleopcontrols.Elevator_Teleop;
+
 public class TeleopMode {
 	
 	public static Elevator_Teleop elevTele;

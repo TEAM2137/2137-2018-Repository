@@ -10,4 +10,17 @@ public class MathExtra {
 	public static int clamp(int val, int min, int max) {
 	    return Math.max(min, Math.min(max, val));
 	}
+	public static double applyDeadband(double value, double deadband) {
+		if (Math.abs(value) > deadband) {
+			if (value > 0.0) {
+				return (value - deadband) / (1.0 - deadband);
+			} 
+			else {
+				return (value + deadband) / (1.0 - deadband);
+			}
+		} 
+		else {
+			  	return 0.0;
+		}
+	}
 }

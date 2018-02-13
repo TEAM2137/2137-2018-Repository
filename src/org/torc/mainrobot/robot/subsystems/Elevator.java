@@ -25,14 +25,14 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private TalonSRX elevator;
 	
-	public static int maxSoftLimit = 25287;
+	public final static int maxSoftLimit = 25287;
 	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;
 	
-	int targetPosition = 0;
+	private int targetPosition = 0;
 	
-	boolean hasBeenHomed = false;
+	private boolean hasBeenHomed = false;
 	
 	Elevator_Home elevHomer;
 	
@@ -148,31 +148,6 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	static void hasNotHomedAlert() {
 		System.out.println("Cannot move Elevator; has not homed!!");
 	}
-	
-	/*
-	void checkSoftLimits() {
-		// Check for position max
-		if (elevator.getSelectedSensorPosition(0) >= 155880) {
-			// Reposition to keep below the gear
-			positionElevator(155000);
-			maxLimitTripped = true;
-		}
-		else {
-			maxLimitTripped = false;
-		}
-		// Check for position min
-		if (hasBeenHomed) {
-			if (elevator.getSelectedSensorPosition(0) <= -1000) {
-				// Reposition to keep below the gear
-				positionElevator(0);
-				maxLimitTripped = true;
-			}
-			else {
-				maxLimitTripped = false;
-			}
-		}
-	}
-	*/
 	
 	@Override
 	protected void initDefaultCommand() {

@@ -4,7 +4,6 @@ import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 import org.torc.mainrobot.tools.CLCommand;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 

@@ -1,5 +1,6 @@
-package org.torc.mainrobot.program;
+package org.torc.mainrobot.teleopcontrols;
 
+import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.program.ButtonMap.RCButtons;
 import org.torc.mainrobot.robot.ControlledStateMachine;
 import org.torc.mainrobot.robot.commands.elevator.Elevator_TriScale;

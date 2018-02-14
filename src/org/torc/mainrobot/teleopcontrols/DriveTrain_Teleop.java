@@ -9,8 +9,8 @@ public class DriveTrain_Teleop extends ControlledStateMachine {
 	
 	@Override
 	public void execute() {
-		// ez arcade drive. ;)
-		RobotMap.DriveSubsystem.arcadeDrive(-RobotMap.driverControl.getAxis(RCAxis.leftY), -RobotMap.driverControl.getAxis(RCAxis.rightX), true);
+		// ez halo drive. ;)
+		RobotMap.DriveSubsystem.haloDrive(-RobotMap.driverControl.getAxis(RCAxis.leftY), -RobotMap.driverControl.getAxis(RCAxis.rightX));
 		
 		// Toggle shifters high/low
 		if (RobotMap.driverControl.getButton(RCButtons.toggleShifters, true)) {

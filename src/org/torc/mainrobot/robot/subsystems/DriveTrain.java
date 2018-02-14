@@ -30,12 +30,15 @@ public class DriveTrain extends Subsystem {
 	
 	double driveMaxOutput = 1;
 	
+	final double quickTurnConstant = 0.3;
+	final double quickTurnSensitivity = 0.7;
+	final double speedTurnSensitivity = 0.7;
+	
 	private boolean shifterState = false;
 	
 	public enum DTSide {left, right}
 	
 	public DriveTrain(int rightMasterPort, int rightSlavePort, int leftMasterPort, int leftSlavePort, int pigeonPort) {
-		
 		rightMaster = new TalonSRX(rightMasterPort);
 		rightSlave = new TalonSRX(rightSlavePort);
 		leftMaster = new TalonSRX(leftMasterPort);
@@ -135,6 +138,29 @@ public class DriveTrain extends Subsystem {
 		
 		leftMaster.set(ControlMode.PercentOutput, MathExtra.clamp(leftMotorOutput, -1, 1) * driveMaxOutput);
 		rightMaster.set(ControlMode.PercentOutput, MathExtra.clamp(rightMotorOutput, -1, 1) * driveMaxOutput);
+	}
+	
+	public void haloDrive(double throttle, double wheel) {
+		double driverThrottle = MathExtra.applyDeadband(throttle, 0.2);
+		double driverWheel = MathExtra.applyDeadband(wheel, 0.2);
+		
+		double rightMotorOutput = 0;
+		double leftMotorOutput = 0;
+
+		// Halo Driver Control Algorithm
+		if (Math.abs(driverThrottle) < quickTurnConstant) {
+			rightMotorOutput = driverThrottle - driverWheel * quickTurnSensitivity;
+			leftMotorOutput = driverThrottle + driverWheel * quickTurnSensitivity;
+		} else {
+			rightMotorOutput = driverThrottle - Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
+			leftMotorOutput = driverThrottle + Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
+		}
+		rightMotorOutput = MathExtra.clamp(rightMotorOutput, -1, 1);
+		leftMotorOutput = MathExtra.clamp(leftMotorOutput, -1, 1);
+		
+		rightMaster.set(ControlMode.PercentOutput, rightMotorOutput);
+		leftMaster.set(ControlMode.PercentOutput, leftMotorOutput);
+
 	}
 	
 	public double getGyroHeader() {

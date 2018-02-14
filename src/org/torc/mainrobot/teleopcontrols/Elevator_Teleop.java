@@ -16,17 +16,17 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	
 	@Override
 	protected void execute() {
-		if (RobotMap.mainController.getButton(RCButtons.positionMode, true)) {
+		if (RobotMap.operatorControl.getButton(RCButtons.positionMode, true)) {
 			elevState = ElevatorStates.position;
 			System.out.println("Elevator: Position mode!");
 		}
 		// To Jogging
-		else if (RobotMap.mainController.getButton(RCButtons.joggingMode, true)) {
+		else if (RobotMap.operatorControl.getButton(RCButtons.joggingMode, true)) {
 			elevState = ElevatorStates.jogging;
 			System.out.println("Elevator: Jogging mode!");
 		}
 		
-		if (RobotMap.mainController.getButton(RCButtons.triTestMode, true)) {
+		if (RobotMap.operatorControl.getButton(RCButtons.triTestMode, true)) {
 			elevState = ElevatorStates.triScale;
 			triScale = new Elevator_TriScale(RobotMap.ElevSubsystem);
 			triScale.start();
@@ -34,18 +34,18 @@ public class Elevator_Teleop extends ControlledStateMachine {
 		
 		switch(elevState) {
 			case jogging:
-				if(RobotMap.mainController.getButton(RCButtons.elevatorUp, true)) {
+				if(RobotMap.operatorControl.getButton(RCButtons.elevatorUp, true)) {
 					RobotMap.ElevSubsystem.jogElevatorPos(jogInterval);
 				}
-				else if (RobotMap.mainController.getButton(RCButtons.elevatorDown, true)) {
+				else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, true)) {
 					RobotMap.ElevSubsystem.jogElevatorPos(-jogInterval);
 				}
 				break;
 			case position:
-				if(RobotMap.mainController.getButton(RCButtons.elevatorUp, true)) {
+				if(RobotMap.operatorControl.getButton(RCButtons.elevatorUp, true)) {
 					RobotMap.ElevSubsystem.jogElevatorPosInc(1);
 				}
-				else if (RobotMap.mainController.getButton(RCButtons.elevatorDown, true)) {
+				else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, true)) {
 					RobotMap.ElevSubsystem.jogElevatorPosInc(-1);
 				}
 				break;

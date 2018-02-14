@@ -47,7 +47,8 @@ public class RobotMap {
 	
 	//public static XboxController xController0 = new XboxController(0);
 	
-	public static ButtonMap mainController;
+	public static ButtonMap driverControl;
+	public static ButtonMap operatorControl;
 	
 	public static PigeonIMU mainPigeon;
 }

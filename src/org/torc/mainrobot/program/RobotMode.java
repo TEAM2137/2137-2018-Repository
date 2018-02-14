@@ -3,6 +3,7 @@ package org.torc.mainrobot.program;
 import org.torc.mainrobot.robot.subsystems.DriveTrain;
 import org.torc.mainrobot.robot.subsystems.Elevator;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 
 //import org.torc.mainrobot.robot.subsystems.DriveTrain;
@@ -16,7 +17,11 @@ public class RobotMode {
 	 */
 	public static void Init() {
 		
-		RobotMap.mainController = new ButtonMap(new XboxController(0));
+		// Init camera server for getting webcams from dashboard
+		CameraServer.getInstance().startAutomaticCapture();
+		
+		RobotMap.driverControl = new ButtonMap(new XboxController(0));
+		RobotMap.operatorControl = new ButtonMap(new XboxController(1));
 		
 		RobotMap.DriveSubsystem = new DriveTrain(22, 23, 10, 11, 4);
 		

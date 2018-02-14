@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,9 +23,14 @@ public class DriveTrain extends Subsystem {
 
 	PigeonIMU.FusionStatus fusionStatus = new PigeonIMU.FusionStatus();
 	
+	Solenoid rightShifter;
+	Solenoid leftShifter;
+	
 	double controllerDeadband = 0.02;
 	
 	double driveMaxOutput = 1;
+	
+	private boolean shifterState = false;
 	
 	public enum DTSide {left, right}
 	
@@ -48,6 +54,21 @@ public class DriveTrain extends Subsystem {
 		leftSlave.set(ControlMode.Follower, leftMaster.getDeviceID());
 		
 		drivePigeon = new PigeonIMU(pigeonPort);	
+		
+		rightShifter = new Solenoid(0);
+		leftShifter = new Solenoid(1);
+		
+		setShifters(false);
+	}
+	
+	public boolean getShifters() {
+		return shifterState;
+	}
+	
+	public void setShifters(boolean shift) {
+		shifterState = shift;
+		rightShifter.set(shift);
+		leftShifter.set(shift);
 	}
 	
 	public void setVelocity(double leftSide, double rightSide) {

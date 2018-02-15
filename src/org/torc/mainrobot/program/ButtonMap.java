@@ -11,7 +11,7 @@ public class ButtonMap {
 	
 	XboxController xController;
 	
-	public enum RCButtons { elevatorUp, elevatorDown, positionMode, joggingMode, triTestMode, toggleShifters }
+	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, elevHigh, toggleShifters }
 	public enum RCAxis { leftX, leftY, rightX, rightY }
 	
 	public ButtonMap(XboxController controller) {
@@ -38,7 +38,7 @@ public class ButtonMap {
 					toReturn = xController.getBumper(Hand.kLeft);
 				}
 				break;
-			case positionMode:
+			case elevLow:
 				if (pressed) {
 					toReturn = xController.getAButtonPressed();
 				}
@@ -46,7 +46,7 @@ public class ButtonMap {
 					toReturn = xController.getAButton();
 				}
 				break;
-			case joggingMode:
+			case elevMid:
 				if (pressed) {
 					toReturn = xController.getBButtonPressed();
 				}
@@ -54,12 +54,12 @@ public class ButtonMap {
 					toReturn = xController.getBButton();
 				}
 				break;
-			case triTestMode:
+			case elevHigh:
 				if (pressed) {
-					toReturn = xController.getXButtonPressed();
+					toReturn = xController.getYButtonPressed();
 				}
 				else {
-					toReturn = xController.getXButton();
+					toReturn = xController.getYButton();
 				}
 				break;
 			case toggleShifters:

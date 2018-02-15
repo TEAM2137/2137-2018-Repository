@@ -34,6 +34,14 @@ public class DriveTrain extends Subsystem {
 	final double quickTurnSensitivity = 0.7;
 	final double speedTurnSensitivity = 0.7;
 	
+	/**
+	 * Maximum desired velocity for movement control
+	 * (What full speed should be).
+	 */
+	final double maxVelocity = 3500;
+	
+	final double voltageRampRate = 1;
+	
 	private boolean shifterState = false;
 	
 	public enum DTSide {left, right}
@@ -44,10 +52,13 @@ public class DriveTrain extends Subsystem {
 		leftMaster = new TalonSRX(leftMasterPort);
 		leftSlave = new TalonSRX(leftSlavePort);
 		// Config master Talons
-		MotorControllers.TalonSRXConfig(rightMaster, 10, 0, 0, 0, 0.1, 0, 0);
-		MotorControllers.TalonSRXConfig(leftMaster, 10, 0, 0, 0, 0.1, 0, 0);
+		MotorControllers.TalonSRXConfig(rightMaster, 10, 0, 0, 0, 0.5, 0, 0);
+		MotorControllers.TalonSRXConfig(leftMaster, 10, 0, 0, 0, 0.5, 0, 0);
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+		
+		rightMaster.configOpenloopRamp(voltageRampRate, 10);
+		leftMaster.configOpenloopRamp(voltageRampRate, 10);
 		
 		// Flip left sensor
 		leftMaster.setSensorPhase(false);
@@ -157,6 +168,13 @@ public class DriveTrain extends Subsystem {
 		}
 		rightMotorOutput = MathExtra.clamp(rightMotorOutput, -1, 1);
 		leftMotorOutput = MathExtra.clamp(leftMotorOutput, -1, 1);
+		
+		/*
+		rightMaster.set(ControlMode.Velocity, rightMotorOutput * maxVelocity);
+		leftMaster.set(ControlMode.Velocity, leftMotorOutput * maxVelocity);
+		*/
+		SmartDashboard.putNumber("RightVelocity", rightMaster.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("RightOutput", rightMotorOutput);
 		
 		rightMaster.set(ControlMode.PercentOutput, rightMotorOutput);
 		leftMaster.set(ControlMode.PercentOutput, leftMotorOutput);

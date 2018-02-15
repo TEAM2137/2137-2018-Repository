@@ -43,7 +43,8 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		elevator = new TalonSRX(talonPort);
 		// Invert motor phase
 		//elevator.setInverted(true);
-		MotorControllers.TalonSRXConfig(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_SlotIdx, RobotMap.Elev_PIDLoopIdx, 0, 0.1, 0, 0);
+		MotorControllers.TalonSRXConfig(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_SlotIdx, RobotMap.Elev_PIDLoopIdx, 0, 5, 0.01, 0);
+		elevator.config_IntegralZone(RobotMap.Elev_SlotIdx, 30, RobotMap.Elev_TimeoutMs);
 		
 		// Invert elev encoder
 		elevator.setSensorPhase(false);

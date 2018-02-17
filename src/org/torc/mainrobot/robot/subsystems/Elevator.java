@@ -2,7 +2,7 @@ package org.torc.mainrobot.robot.subsystems;
 
 import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.InheritedPeriodic;
-import org.torc.mainrobot.robot.commands.elevator.Elevator_Home;
+import org.torc.mainrobot.robot.commands.Elevator_Home;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
@@ -45,9 +45,6 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		//elevator.setInverted(true);
 		MotorControllers.TalonSRXConfig(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_SlotIdx, RobotMap.Elev_PIDLoopIdx, 0, 5, 0.01, 0);
 		elevator.config_IntegralZone(RobotMap.Elev_SlotIdx, 30, RobotMap.Elev_TimeoutMs);
-		
-		// Invert elev encoder
-		elevator.setSensorPhase(false);
 		
 		endstop = new DigitalInput(endstopPort);
 		cubeInput = new DigitalInput(1);

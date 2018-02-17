@@ -40,7 +40,7 @@ public class DriveTrain extends Subsystem {
 	 */
 	final double maxVelocity = 3500;
 	
-	final double voltageRampRate = 1;
+	final double voltageRampRate = 0.2;
 	
 	private boolean shifterState = false;
 	
@@ -60,8 +60,12 @@ public class DriveTrain extends Subsystem {
 		rightMaster.configOpenloopRamp(voltageRampRate, 10);
 		leftMaster.configOpenloopRamp(voltageRampRate, 10);
 		
+		/*
 		// Flip left sensor
 		leftMaster.setSensorPhase(false);
+		*/
+		// Flip right sensor
+		leftMaster.setSensorPhase(true);
 		
 		// Set slaves as followers
 		rightSlave.set(ControlMode.Follower, rightMaster.getDeviceID());

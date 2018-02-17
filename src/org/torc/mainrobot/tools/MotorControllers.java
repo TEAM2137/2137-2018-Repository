@@ -14,7 +14,7 @@ public class MotorControllers {
 	private static void TalonSRXConfigFull(TalonSRX talon, int timeoutMs, int slotIdx, int PIDLoopIdx, double kF, double kP, double kI, double kD) {
 		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, PIDLoopIdx, timeoutMs);
 		TalonSRXSensorZero(talon, timeoutMs, slotIdx);
-		talon.setSensorPhase(true);
+		//talon.setSensorPhase(true);
 		
         talon.configNominalOutputForward(0, timeoutMs);
         talon.configNominalOutputReverse(0, timeoutMs);

@@ -1,4 +1,4 @@
-package org.torc.mainrobot.robot.commands.elevator;
+package org.torc.mainrobot.robot.commands;
 
 import org.torc.mainrobot.robot.subsystems.Elevator;
 

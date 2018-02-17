@@ -21,7 +21,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	public ElevatorPositions elevatorPosition = ElevatorPositions.floor;
 	
-	public DigitalInput endstop, cubeInput;
+	private DigitalInput endstop;
 	
 	private TalonSRX elevator;
 	
@@ -47,7 +47,6 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		elevator.config_IntegralZone(RobotMap.Elev_SlotIdx, 30, RobotMap.Elev_TimeoutMs);
 		
 		endstop = new DigitalInput(endstopPort);
-		cubeInput = new DigitalInput(1);
 		
         elevator.configPeakOutputForward(1, RobotMap.Elev_TimeoutMs);
         elevator.configPeakOutputReverse(-1, RobotMap.Elev_TimeoutMs);
@@ -122,6 +121,10 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	public int getEncoder() {
 		return elevator.getSelectedSensorPosition(0);
+	}
+	
+	public boolean getEndstop() {
+		return endstop.get();
 	}
 	
 	public void jogElevatorPos(double positionInc) {

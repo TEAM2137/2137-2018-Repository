@@ -1,17 +1,18 @@
 package org.torc.mainrobot.robot.commands;
 
 import org.torc.mainrobot.robot.subsystems.Elevator;
+import org.torc.mainrobot.robot.subsystems.UltraGrabber;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Elevator_Home extends Command {
+public class UltraGrabber_Home extends Command {
 	
 	enum HomingStates { firstMoveDown, secondMoveUp }
 	
 	/**
 	 * The calling Subsystem of the command.
 	 */
-	Elevator elevSubsystem; 
+	UltraGrabber UGSubsystem;
 	
 	HomingStates homingState = HomingStates.firstMoveDown;
 	
@@ -20,16 +21,16 @@ public class Elevator_Home extends Command {
 	double firstMoveDownPerc = 0.3;
 	double secondMoveUpPerc = 0.3;
 	
-	public Elevator_Home(Elevator elevator) {
+	public UltraGrabber_Home(UltraGrabber grabber) {
 		// Use requires() here to declare subsystem dependencies
-		elevSubsystem = elevator;
-		requires(elevSubsystem);
+		UGSubsystem = grabber;
+		requires(UGSubsystem);
 	}
 
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		System.out.println("Elevator_Home Init");
+		System.out.println("UltraGrabber_Home Init");
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -38,18 +39,18 @@ public class Elevator_Home extends Command {
 		
 		switch (homingState) {
 			case firstMoveDown:
-				elevSubsystem.jogElevatorPerc(-firstMoveDownPerc);
-				if (elevSubsystem.getEndstop()) {
+				UGSubsystem.jogGrabberPerc(-firstMoveDownPerc);
+				if (UGSubsystem.getEndstop()) {
 					System.out.println("firstMoveDown Done!");
 					homingState = HomingStates.secondMoveUp;
 				}
 				break;
 			case secondMoveUp:
-				elevSubsystem.jogElevatorPerc(secondMoveUpPerc);
-				if (!elevSubsystem.getEndstop()) {
+				UGSubsystem.jogGrabberPerc(secondMoveUpPerc);
+				if (!UGSubsystem.getEndstop()) {
 					System.out.println("secondMoveUp Done!");
-					elevSubsystem.zeroEncoder();
-					elevSubsystem.jogElevatorPerc(0);
+					UGSubsystem.zeroEncoder();
+					UGSubsystem.jogGrabberPerc(0);
 					doneRunning = true;
 				}
 				break;

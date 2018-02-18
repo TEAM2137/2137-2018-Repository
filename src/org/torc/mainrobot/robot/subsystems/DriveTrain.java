@@ -58,7 +58,9 @@ public class DriveTrain extends Subsystem {
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		
 		rightMaster.configOpenloopRamp(voltageRampRate, 10);
+		rightSlave.configOpenloopRamp(voltageRampRate, 10);
 		leftMaster.configOpenloopRamp(voltageRampRate, 10);
+		leftSlave.configOpenloopRamp(voltageRampRate, 10);
 		
 		/*
 		// Flip left sensor
@@ -68,8 +70,10 @@ public class DriveTrain extends Subsystem {
 		leftMaster.setSensorPhase(true);
 		
 		// Set slaves as followers
+		/*
 		rightSlave.set(ControlMode.Follower, rightMaster.getDeviceID());
 		leftSlave.set(ControlMode.Follower, leftMaster.getDeviceID());
+		*/
 		
 		drivePigeon = new PigeonIMU(pigeonPort);	
 		
@@ -102,59 +106,6 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
 	}
 	
-	  /**
-	 * @param xSpeed
-	 * @param zRotation
-	 * @param squaredInputs
-	 * This method is meant to be used to drive the DriveTrain with an arcadeDrive control, just like the one
-	 * in the standard DifferentialDrive class.
-	 * (The code for this method is adopted from the original method in DifferentialDrive in order to use it for
-	 * our TalonSRX drive setup.)
-	 */
-	public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs) {
-		xSpeed = MathExtra.clamp(xSpeed, -1, 1);
-		xSpeed = MathExtra.applyDeadband(xSpeed, controllerDeadband);
-
-		zRotation = MathExtra.clamp(zRotation, -1, 1);
-		zRotation = MathExtra.applyDeadband(zRotation, controllerDeadband);
-
-		// Square the inputs (while preserving the sign) to increase fine control
-		// while permitting full power.
-		if (squaredInputs) {
-			xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
-			zRotation = Math.copySign(zRotation * zRotation, zRotation);
-		}
-
-		double leftMotorOutput;
-		double rightMotorOutput;
-
-		double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
-
-		if (xSpeed >= 0.0) {
-			// First quadrant, else second quadrant
-			if (zRotation >= 0.0) {
-				leftMotorOutput = maxInput;
-				rightMotorOutput = xSpeed - zRotation;
-			} else {
-				leftMotorOutput = xSpeed + zRotation;
-				rightMotorOutput = maxInput;
-			}
-		} 
-		else {
-			// Third quadrant, else fourth quadrant
-			if (zRotation >= 0.0) {
-				leftMotorOutput = xSpeed + zRotation;
-				rightMotorOutput = maxInput;
-			} else {
-				leftMotorOutput = maxInput;
-				rightMotorOutput = xSpeed - zRotation;
-			}
-		}
-		
-		leftMaster.set(ControlMode.PercentOutput, MathExtra.clamp(leftMotorOutput, -1, 1) * driveMaxOutput);
-		rightMaster.set(ControlMode.PercentOutput, MathExtra.clamp(rightMotorOutput, -1, 1) * driveMaxOutput);
-	}
-	
 	public void haloDrive(double throttle, double wheel) {
 		double driverThrottle = MathExtra.applyDeadband(throttle, 0.2);
 		double driverWheel = MathExtra.applyDeadband(wheel, 0.2);
@@ -181,7 +132,10 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("RightOutput", rightMotorOutput);
 		
 		rightMaster.set(ControlMode.PercentOutput, rightMotorOutput);
+		rightSlave.set(ControlMode.PercentOutput, rightMotorOutput);
+		
 		leftMaster.set(ControlMode.PercentOutput, leftMotorOutput);
+		leftSlave.set(ControlMode.PercentOutput, leftMotorOutput);
 
 	}
 	

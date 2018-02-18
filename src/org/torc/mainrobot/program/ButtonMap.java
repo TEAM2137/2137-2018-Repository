@@ -13,7 +13,8 @@ public class ButtonMap {
 	
 	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, 
 							elevHigh, toggleShifters, elevStartPickup,
-							grabberSpitSlow, grabberSpitFast
+							grabberSpitSlow, grabberSpitFast, grabberJogUp,
+							grabberJogDown, tempStopIntake
 							}
 	public enum RCAxis { leftX, leftY, rightX, rightY }
 	
@@ -86,6 +87,25 @@ public class ButtonMap {
 				break;
 			case grabberSpitFast:
 				toReturn = (xController.getPOV() == 0);
+				break;
+			case grabberJogUp:
+				if (pressed) {
+					toReturn = xController.getBumperPressed(Hand.kRight);
+				}
+				else {
+					toReturn = xController.getBumper(Hand.kRight);
+				}
+				break;
+			case grabberJogDown:
+				if (pressed) {
+					toReturn = xController.getBumperPressed(Hand.kLeft);
+				}
+				else {
+					toReturn = xController.getBumper(Hand.kLeft);
+				}
+				break;
+			case tempStopIntake:
+				toReturn = (xController.getPOV() == 90);
 				break;
 		}
 		

@@ -11,15 +11,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class UltraGrabber_Pickup extends Command {
 	
-	enum PickupStates { lowering, waitingForCube, raiseToSwitch }
+	public enum PickupStates { lowering, waitingForCube, raiseGrabber }
 	
-	private PickupStates state = PickupStates.lowering;
+	public PickupStates state = PickupStates.lowering;
 	
 	private boolean isFinished = false;
 	
 	private int endStopCount = 0;
 	
-	private final int endStopWait = 2000 / 20;
+	private final int endStopWait = 800 / 20;
 	
 	public UltraGrabber_Pickup() {
 		// Use requires() here to declare subsystem dependencies
@@ -35,7 +35,6 @@ public class UltraGrabber_Pickup extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		System.out.println("Running command execute!!");
 		switch (state) {
 			case lowering:
 				RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.pickup);
@@ -55,11 +54,12 @@ public class UltraGrabber_Pickup extends Command {
 				
 				if (endStopCount >= endStopWait) {
 					RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
-					state = PickupStates.raiseToSwitch;
+					state = PickupStates.raiseGrabber;
 				}
 				break;
-			case raiseToSwitch:
-				RobotMap.ElevSubsystem.positionFind(ElevatorPositions.middle);
+			case raiseGrabber:
+				//RobotMap.ElevSubsystem.positionFind(ElevatorPositions.middle);
+				RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
 				isFinished = true;
 				break;
 		}

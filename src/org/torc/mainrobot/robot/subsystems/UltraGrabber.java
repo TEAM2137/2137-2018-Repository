@@ -2,6 +2,7 @@ package org.torc.mainrobot.robot.subsystems;
 
 import org.torc.mainrobot.robot.InheritedPeriodic;
 import org.torc.mainrobot.robot.commands.UltraGrabber_Home;
+import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -10,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * 	ULTRA GRABBER
@@ -31,6 +33,16 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	public enum GrabberPositions { up, flat, pickup, shooting }
 	// TODO: change temportary speeds to final
 	public enum GrabberSpeeds { none, pickup, dropping, shooting }
+	
+	private final static int angleMult = 4521;
+	
+	private final static int ticksMin = -20 * angleMult;
+	private final static int ticksMax = 90 * angleMult;
+	
+	private int targetAngle = 0;
+	
+	// TODO: remove later after testing
+	private static int grabTarget = 0;
 
 	public UltraGrabber(int leftVictorPort, int rightVictorPort, int angleTalonPort, int endstopPort, int cubePhotoeyePort) {
 		// Add to periodic list
@@ -41,7 +53,8 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 
 		angleMotor = new TalonSRX(angleTalonPort);
 		
-		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 0.01, 0, 0);
+		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 0.005, 0.00001, 0);
+		angleMotor.config_IntegralZone(0, 40000, 10);
 		
 		angleMotor.configPeakOutputForward(0.75, 10);
 		angleMotor.configPeakOutputReverse(-0.75, 10);
@@ -62,7 +75,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = -20;
 				break;
 			case pickup:
-				toReturn = 75;
+				toReturn = 75; //75
 				break;
 			case flat:
 				toReturn = 60;
@@ -71,8 +84,10 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = 45;
 				break;
 		}
+		SmartDashboard.putNumber("GrabberTarget", (toReturn * angleMult));
+		grabTarget = (toReturn * angleMult);
 		// Convert degrees from lookup to encoder ticks
-		return (toReturn * 4521);
+		return (toReturn * angleMult);
 	}
 	
 	private static double GetGrabberSpeeds(GrabberSpeeds speed) {
@@ -82,10 +97,10 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = 0;
 				break;
 			case pickup:
-				toReturn = -0.5;
+				toReturn = -1; //-0.85
 				break;
 			case dropping:
-				toReturn = 0.2;
+				toReturn = 0.5;
 				break;
 			case shooting:
 				toReturn = 1;
@@ -100,7 +115,9 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 			return;
 		}
 		System.out.println("Grabber finding position: " + position.name());
-		angleMotor.set(ControlMode.Position, GetGrabberPositions(position));
+		int targ = GetGrabberPositions(position);
+		targetAngle = targ / angleMult;
+		angleMotor.set(ControlMode.Position, MathExtra.clamp(targ, ticksMin, ticksMax));
 	}
 	
 	public void setGrabberIntakeSpeed (GrabberSpeeds speed) {
@@ -114,6 +131,15 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	 */
 	public void jogGrabberPerc(double value) {
 		angleMotor.set(ControlMode.PercentOutput, value);
+	}
+	
+	public void jogGrabberPosInc(int angleInc) {
+		if (!hasBeenHomed) {
+			hasNotHomedAlert();
+			return;
+		}
+		targetAngle += angleInc;
+		angleMotor.set(ControlMode.Position, MathExtra.clamp((targetAngle * angleMult), ticksMin, ticksMax));
 	}
 	
 	public void homeGrabber() {
@@ -171,5 +197,6 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 			hasBeenHomed = true;
 			findGrabberPosition(GrabberPositions.up);
 		}
+		SmartDashboard.putNumber("GrabberError", (getEncoder() - grabTarget));
 	}
 }

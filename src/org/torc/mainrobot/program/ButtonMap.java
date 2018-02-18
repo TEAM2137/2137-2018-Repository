@@ -11,7 +11,10 @@ public class ButtonMap {
 	
 	XboxController xController;
 	
-	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, elevHigh, toggleShifters }
+	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, 
+							elevHigh, toggleShifters, elevStartPickup,
+							grabberSpitSlow, grabberSpitFast
+							}
 	public enum RCAxis { leftX, leftY, rightX, rightY }
 	
 	public ButtonMap(XboxController controller) {
@@ -69,6 +72,20 @@ public class ButtonMap {
 				else {
 					toReturn = xController.getXButton();
 				}
+				break;
+			case elevStartPickup:
+				if (pressed) {
+					toReturn = xController.getYButtonPressed();
+				}
+				else {
+					toReturn = xController.getYButton();
+				}
+				break;
+			case grabberSpitSlow:
+				toReturn = (xController.getPOV() == 180);
+				break;
+			case grabberSpitFast:
+				toReturn = (xController.getPOV() == 0);
 				break;
 		}
 		

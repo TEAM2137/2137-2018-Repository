@@ -2,6 +2,7 @@ package org.torc.mainrobot.program;
 
 import org.torc.mainrobot.robot.subsystems.DriveTrain;
 import org.torc.mainrobot.robot.subsystems.Elevator;
+import org.torc.mainrobot.robot.subsystems.UltraGrabber;
 import org.torc.mainrobot.tools.Pneumatics;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -30,7 +31,9 @@ public class RobotMode {
 		
 		RobotMap.DriveSubsystem = new DriveTrain(22, 23, 10, 11, 4);
 		
-		RobotMap.ElevSubsystem = new Elevator(24, 0);
+		RobotMap.ElevSubsystem = new Elevator(24, 0);		
+		
+		RobotMap.GrabberSubsystem = new UltraGrabber(0, 1, 13, 2, 1);
 		
 	}
 	

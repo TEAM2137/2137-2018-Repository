@@ -43,11 +43,7 @@ public class RobotMap {
 	
 	public static Elevator ElevSubsystem;
 	
-	public static int Elev_TimeoutMs = 10;
-	public static int Elev_SlotIdx = 0;
-	public static int Elev_PIDLoopIdx = 0;
-	
-	//public static XboxController xController0 = new XboxController(0);
+	public static UltraGrabber GrabberSubsystem;
 	
 	public static ButtonMap driverControl;
 	public static ButtonMap operatorControl;

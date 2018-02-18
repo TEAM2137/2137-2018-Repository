@@ -43,20 +43,20 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		elevator = new TalonSRX(talonPort);
 		// Invert motor phase
 		//elevator.setInverted(true);
-		MotorControllers.TalonSRXConfig(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_SlotIdx, RobotMap.Elev_PIDLoopIdx, 0, 5, 0.01, 0);
-		elevator.config_IntegralZone(RobotMap.Elev_SlotIdx, 30, RobotMap.Elev_TimeoutMs);
+		MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0, 5, 0.01, 0);
+		elevator.config_IntegralZone(0, 30, 10);
 		
 		endstop = new DigitalInput(endstopPort);
 		
-        elevator.configPeakOutputForward(1, RobotMap.Elev_TimeoutMs);
-        elevator.configPeakOutputReverse(-1, RobotMap.Elev_TimeoutMs);
+        elevator.configPeakOutputForward(1, 10);
+        elevator.configPeakOutputReverse(-1, 10);
 	}
 	
 	private static int GetElevatorPositions(ElevatorPositions position) {
 		int toReturn = 0;
 		switch(position) {
 			case floor:
-				toReturn = 2436;
+				toReturn = 0;
 				break;
 			case middle:
 				toReturn = 11745;
@@ -111,7 +111,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void zeroEncoder() {
-		MotorControllers.TalonSRXSensorZero(elevator, RobotMap.Elev_TimeoutMs, RobotMap.Elev_PIDLoopIdx);
+		MotorControllers.TalonSRXSensorZero(elevator, 10, 0);
 	}
 	
 	public void printEncoder() {

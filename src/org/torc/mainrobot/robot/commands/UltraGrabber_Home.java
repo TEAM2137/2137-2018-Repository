@@ -18,8 +18,8 @@ public class UltraGrabber_Home extends Command {
 	
 	boolean doneRunning = false;
 	
-	double firstMoveDownPerc = 0.3;
-	double secondMoveUpPerc = 0.3;
+	double firstMoveDownPerc = 0.5;
+	double secondMoveUpPerc = 0.1;
 	
 	public UltraGrabber_Home(UltraGrabber grabber) {
 		// Use requires() here to declare subsystem dependencies

@@ -7,6 +7,8 @@ public class DisabledMode {
 		Scheduler.getInstance().removeAll();
 		// Dehome elevator
 		RobotMap.ElevSubsystem.deHome();
+		// Dehome grabber
+		RobotMap.GrabberSubsystem.deHome();
 	}
 	
 	public static void Periodic() {

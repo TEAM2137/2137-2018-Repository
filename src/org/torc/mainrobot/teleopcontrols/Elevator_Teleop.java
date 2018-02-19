@@ -1,6 +1,7 @@
 package org.torc.mainrobot.teleopcontrols;
 
 import org.torc.mainrobot.program.RobotMap;
+import org.torc.mainrobot.program.ButtonMap.GetType;
 import org.torc.mainrobot.program.ButtonMap.RCButtons;
 import org.torc.mainrobot.robot.ControlledStateMachine;
 import org.torc.mainrobot.robot.commands.UltraGrabber_Pickup;
@@ -33,43 +34,49 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	@Override
 	protected void execute() {
 		
-		if (RobotMap.driverControl.getButton(RCButtons.grabberSpitSlow, false)) {
+		if (RobotMap.driverControl.getButton(RCButtons.grabberSpitSlow, GetType.normal)) {
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.dropping);
 			operatorInterrupt();
 		}
-		else if (RobotMap.driverControl.getButton(RCButtons.grabberSpitFast, false)) {
+		else if (RobotMap.driverControl.getButton(RCButtons.grabberSpitFast, GetType.normal)) {
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.shooting);
 			operatorInterrupt();
 		}
+		else if (RobotMap.driverControl.getButton(RCButtons.grabberSpitFast, GetType.released) || 
+				RobotMap.driverControl.getButton(RCButtons.grabberSpitSlow, GetType.released)) {
+			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
+		}
+		/*
 		else if (RobotMap.driverControl.getButton(RCButtons.tempStopIntake, false)) {
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
 			operatorInterrupt();
 		}
+		*/
 		
 		// Operator buttons all have override over other functions
-		if (RobotMap.operatorControl.getButton(RCButtons.elevLow, true)) {
+		if (RobotMap.operatorControl.getButton(RCButtons.elevLow, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.floor);
 			operatorInterrupt();
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.elevMid, true)) {
+		else if (RobotMap.operatorControl.getButton(RCButtons.elevMid, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.middle);
 			operatorInterrupt();
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.elevHigh, true)) {
+		else if (RobotMap.operatorControl.getButton(RCButtons.elevHigh, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.high);
 			operatorInterrupt();
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorUp, true)) {
+		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorUp, GetType.pressed)) {
 			RobotMap.ElevSubsystem.jogElevatorPos(jogInterval);
 			operatorInterrupt();
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, true)) {
+		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, GetType.pressed)) {
 			RobotMap.ElevSubsystem.jogElevatorPos(-jogInterval);
 			operatorInterrupt();
 		}
 		
 		// Grabber controls
-		if (RobotMap.driverControl.getButton(RCButtons.elevStartPickup, true)) {
+		if (RobotMap.driverControl.getButton(RCButtons.elevStartPickup, GetType.pressed)) {
 			if (pickupComm != null && pickupComm.isRunning()) {
 				// Finish command
 				pickupComm.state = PickupStates.raiseGrabber;
@@ -81,11 +88,11 @@ public class Elevator_Teleop extends ControlledStateMachine {
 			}
 		}
 		// Grabber controls
-		else if (RobotMap.driverControl.getButton(RCButtons.grabberJogUp, true)) {
+		else if (RobotMap.driverControl.getButton(RCButtons.grabberJogUp, GetType.pressed)) {
 			RobotMap.GrabberSubsystem.jogGrabberPosInc(-angleInc);
 			operatorInterrupt();
 		}
-		else if (RobotMap.driverControl.getButton(RCButtons.grabberJogDown, true)) {
+		else if (RobotMap.driverControl.getButton(RCButtons.grabberJogDown, GetType.pressed)) {
 			RobotMap.GrabberSubsystem.jogGrabberPosInc(angleInc);
 			operatorInterrupt();
 		}

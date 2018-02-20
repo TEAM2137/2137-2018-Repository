@@ -1,5 +1,7 @@
 package org.torc.mainrobot.program;
 
+import org.torc.mainrobot.tools.MathExtra;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
@@ -11,14 +13,12 @@ public class ButtonMap {
 	
 	XboxController xController;
 	
-	private int POVWatch = -1;
-	
 	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, 
 							elevHigh, toggleShifters, elevStartPickup,
-							grabberSpitSlow, grabberSpitFast, grabberJogUp,
-							grabberJogDown
-							}
-	public enum RCAxis { leftX, leftY, rightX, rightY }
+							grabberSpitSlow, grabberSpitFast }
+	
+	public enum RCAxis { leftX, leftY, rightX, rightY,
+						grabberJog }
 	
 	public enum GetType { normal, pressed, released }
 	
@@ -31,112 +31,31 @@ public class ButtonMap {
 		
 		switch (button) {
 			case elevatorUp:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getBumperPressed(Hand.kRight);
-				}
-				else {
-					toReturn = xController.getBumper(Hand.kRight);
-				}
+				toReturn = getEasyButtonInternal(6, getType);
 				break;
 			case elevatorDown:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getBumperPressed(Hand.kLeft);
-				}
-				else {
-					toReturn = xController.getBumper(Hand.kLeft);
-				}
+				toReturn = getEasyButtonInternal(5, getType);
 				break;
 			case elevLow:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getAButtonPressed();
-				}
-				else {
-					toReturn = xController.getAButton();
-				}
+				toReturn = getEasyButtonInternal(1, getType);
 				break;
 			case elevMid:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getBButtonPressed();
-				}
-				else {
-					toReturn = xController.getBButton();
-				}
+				toReturn = getEasyButtonInternal(2, getType);
 				break;
 			case elevHigh:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getYButtonPressed();
-				}
-				else {
-					toReturn = xController.getYButton();
-				}
+				toReturn = getEasyButtonInternal(4, getType);
 				break;
 			case toggleShifters:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getXButtonPressed();
-				}
-				else {
-					toReturn = xController.getXButton();
-				}
+				toReturn = getEasyButtonInternal(3, getType);
 				break;
 			case elevStartPickup:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getYButtonPressed();
-				}
-				else {
-					toReturn = xController.getYButton();
-				}
+				toReturn = getEasyButtonInternal(3, getType);
 				break;
-			case grabberSpitSlow: {
-				int POVPosition = 180;
-				if (getType == GetType.pressed) {
-					if (xController.getPOV() == POVPosition && xController.getPOV() != POVWatch) {
-						toReturn = true;
-					}
-				}
-				else if (getType == GetType.released) {
-					if (POVWatch == POVPosition && xController.getPOV() != POVPosition) {
-						toReturn = true;
-					}
-				}
-				else {
-					toReturn = (xController.getPOV() == POVPosition);
-				}
-				updatePOVWatch();
+			case grabberSpitSlow:
+				toReturn = getPOVInternal(180, getType);
 				break;
-			}
-			case grabberSpitFast: {
-				int POVPosition = 0;
-				if (getType == GetType.pressed) {
-					if (xController.getPOV() == POVPosition && xController.getPOV() != POVWatch) {
-						toReturn = true;
-					}
-				}
-				else if (getType == GetType.released) {
-					if (POVWatch == POVPosition && xController.getPOV() != POVPosition) {
-						toReturn = true;
-					}
-				}
-				else {
-					toReturn = (xController.getPOV() == POVPosition);
-				}
-				updatePOVWatch();
-				break;
-			}
-			case grabberJogUp:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getBumperPressed(Hand.kRight);
-				}
-				else {
-					toReturn = xController.getBumper(Hand.kRight);
-				}
-				break;
-			case grabberJogDown:
-				if (getType == GetType.pressed) {
-					toReturn = xController.getBumperPressed(Hand.kLeft);
-				}
-				else {
-					toReturn = xController.getBumper(Hand.kLeft);
-				}
+			case grabberSpitFast:
+				toReturn = getPOVInternal(0, getType);
 				break;
 		}
 		
@@ -159,13 +78,58 @@ public class ButtonMap {
 			case rightY:
 				toReturn = xController.getY(Hand.kRight);
 				break;
+			case grabberJog:
+				toReturn = -xController.getTriggerAxis(Hand.kRight) + xController.getTriggerAxis(Hand.kLeft);
+				toReturn = MathExtra.clamp(toReturn, -1, 1);
+				break;
 		}
 		
 		return toReturn;
 	}
 	
-	private void updatePOVWatch() {
-		POVWatch = xController.getPOV();
+	private int POVWatch = -1;
+	
+	private boolean getPOVInternal(int position, GetType type) {
+		boolean toReturn = false;
+		
+		int pov = xController.getPOV();
+		
+		if (type == GetType.pressed) {
+			if (pov == position && pov != POVWatch) {
+				toReturn = true;
+				POVWatch = pov;
+			}
+		}
+		else if (type == GetType.released) {
+			if (POVWatch == position && pov != POVWatch) {
+				toReturn = true;
+				POVWatch = pov;
+			}
+		}
+		else {
+			if (pov == position) {
+				toReturn = true;
+				POVWatch = pov;
+			}
+		}
+		
+		return toReturn;
+	}
+	
+	private boolean getEasyButtonInternal(int buttonId, GetType type) {
+		boolean toReturn = false;
+		
+		if (type == GetType.pressed) {
+			toReturn = xController.getRawButtonPressed(buttonId);
+		}
+		else if (type == GetType.released) {
+			toReturn = xController.getRawButtonReleased(buttonId);
+		}
+		else {
+			toReturn = xController.getRawButton(buttonId);
+		}
+		
+		return toReturn;
 	}
 	
 	

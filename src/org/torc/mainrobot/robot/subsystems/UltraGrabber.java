@@ -34,15 +34,15 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	// TODO: change temportary speeds to final
 	public enum GrabberSpeeds { none, pickup, dropping, shooting }
 	
-	private final static int angleMult = 4521;
+	private final static double angleMult = 4521;
 	
-	private final static int ticksMin = -20 * angleMult;
-	private final static int ticksMax = 90 * angleMult;
+	private final static double ticksMin = -18 * angleMult;
+	private final static double ticksMax = 70 * angleMult;
 	
-	private int targetAngle = 0;
+	private double targetAngle = 0;
 	
 	// TODO: remove later after testing
-	private static int grabTarget = 0;
+	private static double grabTarget = 0;
 
 	public UltraGrabber(int leftVictorPort, int rightVictorPort, int angleTalonPort, int endstopPort, int cubePhotoeyePort) {
 		// Add to periodic list
@@ -68,14 +68,14 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	 * @param position
 	 * @return The position of the grabber state in encoder ticks.
 	 */
-	private static int GetGrabberPositions(GrabberPositions position) {
+	private static double GetGrabberPositions(GrabberPositions position) {
 		int toReturn = 0;
 		switch(position) {
 			case up:
-				toReturn = -20;
+				toReturn = -18;
 				break;
 			case pickup:
-				toReturn = 75; //75
+				toReturn = 70; //75
 				break;
 			case flat:
 				toReturn = 60;
@@ -115,8 +115,9 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 			return;
 		}
 		System.out.println("Grabber finding position: " + position.name());
-		int targ = GetGrabberPositions(position);
+		double targ = GetGrabberPositions(position);
 		targetAngle = targ / angleMult;
+		targetAngle = MathExtra.clamp((targetAngle * angleMult), ticksMin, ticksMax) / angleMult;
 		angleMotor.set(ControlMode.Position, MathExtra.clamp(targ, ticksMin, ticksMax));
 	}
 	
@@ -133,12 +134,13 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		angleMotor.set(ControlMode.PercentOutput, value);
 	}
 	
-	public void jogGrabberPosInc(int angleInc) {
+	public void jogGrabberPosInc(double angleInc) {
 		if (!hasBeenHomed) {
 			hasNotHomedAlert();
 			return;
 		}
 		targetAngle += angleInc;
+		targetAngle = MathExtra.clamp((targetAngle * angleMult), ticksMin, ticksMax) / angleMult;
 		angleMotor.set(ControlMode.Position, MathExtra.clamp((targetAngle * angleMult), ticksMin, ticksMax));
 	}
 	

@@ -3,6 +3,7 @@ package org.torc.mainrobot.program;
 import org.torc.mainrobot.tools.MathExtra;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
@@ -11,7 +12,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  */
 public class ButtonMap {
 	
-	XboxController xController;
+	GenericHID mController;
 	
 	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, 
 							elevHigh, toggleShifters, elevStartPickup,
@@ -22,8 +23,8 @@ public class ButtonMap {
 	
 	public enum GetType { normal, pressed, released }
 	
-	public ButtonMap(XboxController controller) {
-		xController = controller;
+	public ButtonMap(GenericHID controller) {
+		mController = controller;
 	}
 	
 	public boolean getButton(RCButtons button, GetType getType) {
@@ -67,19 +68,19 @@ public class ButtonMap {
 		
 		switch (axis) {
 			case leftX:
-				toReturn = xController.getX(Hand.kLeft);
+				toReturn = mController.getX(Hand.kLeft);
 				break;
 			case leftY:
-				toReturn = xController.getY(Hand.kLeft);
+				toReturn = mController.getY(Hand.kLeft);
 				break;
 			case rightX:
-				toReturn = xController.getX(Hand.kRight);
+				toReturn = mController.getX(Hand.kRight);
 				break;
 			case rightY:
-				toReturn = xController.getY(Hand.kRight);
+				toReturn = mController.getY(Hand.kRight);
 				break;
 			case grabberJog:
-				toReturn = -xController.getTriggerAxis(Hand.kRight) + xController.getTriggerAxis(Hand.kLeft);
+				toReturn = -mController.getRawAxis(3) + mController.getRawAxis(2);
 				toReturn = MathExtra.clamp(toReturn, -1, 1);
 				break;
 		}
@@ -92,7 +93,7 @@ public class ButtonMap {
 	private boolean getPOVInternal(int position, GetType type) {
 		boolean toReturn = false;
 		
-		int pov = xController.getPOV();
+		int pov = mController.getPOV();
 		
 		if (type == GetType.pressed) {
 			if (pov == position && pov != POVWatch) {
@@ -120,13 +121,13 @@ public class ButtonMap {
 		boolean toReturn = false;
 		
 		if (type == GetType.pressed) {
-			toReturn = xController.getRawButtonPressed(buttonId);
+			toReturn = mController.getRawButtonPressed(buttonId);
 		}
 		else if (type == GetType.released) {
-			toReturn = xController.getRawButtonReleased(buttonId);
+			toReturn = mController.getRawButtonReleased(buttonId);
 		}
 		else {
-			toReturn = xController.getRawButton(buttonId);
+			toReturn = mController.getRawButton(buttonId);
 		}
 		
 		return toReturn;

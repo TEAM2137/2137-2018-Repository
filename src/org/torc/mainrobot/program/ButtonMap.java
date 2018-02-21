@@ -132,6 +132,4 @@ public class ButtonMap {
 		
 		return toReturn;
 	}
-	
-	
 }

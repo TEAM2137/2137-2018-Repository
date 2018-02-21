@@ -23,4 +23,17 @@ public class MathExtra {
 			  	return 0.0;
 		}
 	}
+	
+	public static double lerp(double var1, double var2, double t) {
+		t = clamp(t, -1, 1);
+		return (1 - t) * var1 + t * var2;
+	}
+	public static float lerp(float var1, float var2, float t) {
+		t = clamp(t, -1, 1);
+		return (1 - t) * var1 + t * var2;
+	}
+	public static int lerp(int var1, int var2, double t) {
+		t = clamp(t, -1, 1);
+		return (int) ((1 - t) * var1 + t * var2);
+	}
 }

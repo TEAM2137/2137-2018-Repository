@@ -13,7 +13,7 @@ import org.torc.mainrobot.robot.Robot;
  */
 public class CommandList implements InheritedPeriodic {
 	
-	private ArrayList<CLCommand> comList;
+	private ArrayList<CLCommand> comList = new ArrayList<CLCommand>();
 	
 	private int iPos = 0;
 	
@@ -42,6 +42,7 @@ public class CommandList implements InheritedPeriodic {
 				if(iPos > comList.size() - 1) {
 					iPos = 0;
 					started = false;
+					System.out.println("Stopped Commandlist!");
 					return;
 				}
 				comList.get(iPos).start();

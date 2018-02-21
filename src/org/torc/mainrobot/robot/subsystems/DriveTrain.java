@@ -14,10 +14,17 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends Subsystem {
-
-	DifferentialDrive roboDrive;	
+	/**
+	 * The amount of encoder ticks it takes 
+	 * for the driveline to do a full rotation.
+	 */
+	public final int TicksPerRev = 3600;
 	
-	TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
+	public final double WheelDiameterIn = 6;
+	
+	public final double FullSpeedVelocity = 3500;
+	
+	private TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
 
 	PigeonIMU drivePigeon;
 
@@ -62,12 +69,11 @@ public class DriveTrain extends Subsystem {
 		leftMaster.configOpenloopRamp(voltageRampRate, 10);
 		leftSlave.configOpenloopRamp(voltageRampRate, 10);
 		
-		/*
 		// Flip left sensor
-		leftMaster.setSensorPhase(false);
-		*/
-		// Flip right sensor
 		leftMaster.setSensorPhase(true);
+		
+		// Flip right sensor
+		//rightMaster.setSensorPhase(true);
 		
 		// Set slaves as followers
 		/*
@@ -94,16 +100,25 @@ public class DriveTrain extends Subsystem {
 	}
 	
 	public void setVelocity(double leftSide, double rightSide) {
+		leftSide = MathExtra.clamp(leftSide, -1, 1) * FullSpeedVelocity;
 		leftMaster.set(ControlMode.Velocity, leftSide);
+		if (leftSlave.getControlMode() != ControlMode.Follower) {
+			leftSlave.set(ControlMode.Follower, leftMaster.getDeviceID());
+		}
+		
+		rightSide = MathExtra.clamp(rightSide, -1, 1) * FullSpeedVelocity;
 		rightMaster.set(ControlMode.Velocity, rightSide);
+		if (rightSlave.getControlMode() != ControlMode.Follower) {
+			rightSlave.set(ControlMode.Follower, rightMaster.getDeviceID());
+		}
 	}
 	
 	public void setPercVBus(double leftSide, double rightSide) {
 		leftMaster.set(ControlMode.PercentOutput, leftSide);
+		leftSlave.set(ControlMode.PercentOutput, leftSide);
+		
 		rightMaster.set(ControlMode.PercentOutput, rightSide);
-		// Read encoders
-		SmartDashboard.putNumber("leftEncoder", leftMaster.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
+		rightSlave.set(ControlMode.PercentOutput, rightSide);
 	}
 	
 	public void haloDrive(double throttle, double wheel) {
@@ -121,6 +136,7 @@ public class DriveTrain extends Subsystem {
 			rightMotorOutput = driverThrottle - Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
 			leftMotorOutput = driverThrottle + Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
 		}
+		
 		rightMotorOutput = MathExtra.clamp(rightMotorOutput, -1, 1);
 		leftMotorOutput = MathExtra.clamp(leftMotorOutput, -1, 1);
 		
@@ -128,15 +144,14 @@ public class DriveTrain extends Subsystem {
 		rightMaster.set(ControlMode.Velocity, rightMotorOutput * maxVelocity);
 		leftMaster.set(ControlMode.Velocity, leftMotorOutput * maxVelocity);
 		*/
-		SmartDashboard.putNumber("RightVelocity", rightMaster.getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("RightOutput", rightMotorOutput);
+		//setPercVBus(leftMotorOutput, rightMotorOutput);
+		setVelocity(leftMotorOutput, rightMotorOutput);
 		
-		rightMaster.set(ControlMode.PercentOutput, rightMotorOutput);
-		rightSlave.set(ControlMode.PercentOutput, rightMotorOutput);
+		// Read encoders
+		SmartDashboard.putNumber("leftEncoder", leftMaster.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("RightEVel", rightMaster.getSelectedSensorVelocity(0));
 		
-		leftMaster.set(ControlMode.PercentOutput, leftMotorOutput);
-		leftSlave.set(ControlMode.PercentOutput, leftMotorOutput);
-
 	}
 	
 	public double getGyroHeader() {
@@ -157,8 +172,8 @@ public class DriveTrain extends Subsystem {
 		drivePigeon.setFusedHeading(0.0, 10);
 	}
 	
-	public double getEncoder(DTSide side) {
-		double retVal = 0;
+	public int getEncoder(DTSide side) {
+		int retVal = 0;
 		switch (side) {
 			case left:
 				retVal = leftMaster.getSelectedSensorPosition(0);

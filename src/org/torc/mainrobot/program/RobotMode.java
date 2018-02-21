@@ -29,11 +29,11 @@ public class RobotMode {
 		RobotMap.driverControl = new ButtonMap(new XboxController(0));
 		RobotMap.operatorControl = new ButtonMap(new XboxController(1));
 		
-		RobotMap.DriveSubsystem = new DriveTrain(22, 23, 10, 11, 4);
+		RobotMap.DriveSubsystem = new DriveTrain(10, 11, 22, 23, 4);
 		
 		RobotMap.ElevSubsystem = new Elevator(24, 0);		
 		
-		RobotMap.GrabberSubsystem = new UltraGrabber(0, 1, 13, 2, 3);
+		RobotMap.GrabberSubsystem = new UltraGrabber(0, 1, 13, 1, 2);
 		
 	}
 	

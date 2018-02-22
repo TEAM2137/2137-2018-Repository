@@ -28,7 +28,7 @@ public class DriveStraight extends CLCommand {
 		
 		targetTicks = (int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
 		
-		slowDownPoint = (targetTicks/3) * 2;
+		slowDownPoint = (targetTicks/4) * 3;
 	}
 
 	// Called just before this Command runs the first time

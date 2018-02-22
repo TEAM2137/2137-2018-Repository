@@ -1,6 +1,7 @@
 package org.torc.mainrobot.program;
 
 import org.torc.mainrobot.robot.commands.auton.DriveStraight;
+import org.torc.mainrobot.robot.commands.auton.DriveStraight_Angle;
 import org.torc.mainrobot.robot.commands.auton.TestAutonCommand;
 import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 import org.torc.mainrobot.tools.CommandList;
@@ -17,7 +18,10 @@ public class AutonMode {
 		
 		CommandList testCom = new CommandList();
 		testCom.addCommand(new TestAutonCommand("Going to start driving in a few seconds!!"));
-		testCom.addCommand(new DriveStraight(RobotMap.DriveSubsystem, 100, 0.5));
+		//testCom.addCommand(new DriveStraight(RobotMap.DriveSubsystem, 100, 0.5));
+		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, 0));
+		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, 45));
+		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, -45));
 		testCom.start();
 	}
 	
@@ -28,7 +32,7 @@ public class AutonMode {
 		SmartDashboard.putNumber("RightEnc", RobotMap.DriveSubsystem.getEncoder(DTSide.right));
 		SmartDashboard.putNumber("LeftEnc", RobotMap.DriveSubsystem.getEncoder(DTSide.left));
 		
-		//SmartDashboard.putNumber("FusionAngle", RobotMap.DriveSubsystem.getGyroHeader());
+		SmartDashboard.putNumber("FusionAngle", RobotMap.DriveSubsystem.getGyroHeader());
 
 	}
 }

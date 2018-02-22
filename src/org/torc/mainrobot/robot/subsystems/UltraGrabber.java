@@ -32,7 +32,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	// TODO: change temportary positions to final
 	public enum GrabberPositions { up, flat, pickup, shooting }
 	// TODO: change temportary speeds to final
-	public enum GrabberSpeeds { none, pickup, dropping, shooting }
+	public enum GrabberSpeeds { none, cubeKeep, pickup, dropping, shooting }
 	
 	private final static double angleMult = 4521;
 	
@@ -95,6 +95,9 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		switch(speed) {
 			case none:
 				toReturn = 0;
+				break;
+			case cubeKeep:
+				toReturn = -0.15;
 				break;
 			case pickup:
 				toReturn = -1; //-0.85

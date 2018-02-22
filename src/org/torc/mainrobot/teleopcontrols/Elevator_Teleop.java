@@ -50,7 +50,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
 		}
 		
-		/*
+		
 		// Operator buttons all have override over other functions
 		if (RobotMap.operatorControl.getButton(RCButtons.elevLow, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.floor);
@@ -72,7 +72,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 			RobotMap.ElevSubsystem.jogElevatorPos(-jogInterval);
 			operatorInterrupt();
 		}
-		*/
+		
 		
 		// Grabber controls
 		if (RobotMap.operatorControl.getButton(RCButtons.elevStartPickup, GetType.pressed)) {

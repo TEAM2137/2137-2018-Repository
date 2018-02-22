@@ -53,7 +53,7 @@ public class UltraGrabber_Pickup extends Command {
 				SmartDashboard.putNumber("PickupEndstopCount", endStopCount);
 				
 				if (endStopCount >= endStopWait) {
-					RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
+					RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.cubeKeep);
 					state = PickupStates.raiseGrabber;
 				}
 				break;

@@ -25,7 +25,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private TalonSRX elevator;
 	
-	public final static int maxSoftLimit = 25287;
+	public final static int maxSoftLimit = 28345;
 	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;

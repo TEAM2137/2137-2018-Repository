@@ -22,27 +22,36 @@ public class DriveStraight_Angle extends CLCommand {
 	
 	private int slowDownPoint = 0;
 	
-	private final double pGain = 0.045;
+	private final double pGain = 0.01;//0.045;
 	
 	private double angleTarget = 0;
 	
-	public DriveStraight_Angle(DriveTrain dTrain, double inches, double mSpeed, double angle) {
+	private boolean relative = true;
+	
+	private boolean speedRamp = true;
+	
+	public DriveStraight_Angle(DriveTrain dTrain, double inches, double mSpeed, double angle, boolean isRelative, boolean rampSpeed) {
 		driveSubsystem = dTrain;
 		requires(driveSubsystem);
 		
 		mainSpeed = mSpeed;
 		angleTarget = angle;
 		
+		relative = isRelative;
+		speedRamp = rampSpeed;
+		
 		targetTicks = (int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
 		
-		slowDownPoint = (targetTicks/3) * 2;
+		slowDownPoint = (targetTicks / 4) * 3;
 	}
 
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		leftEncBase = driveSubsystem.getEncoder(DTSide.left);
-		rightEncBase = driveSubsystem.getEncoder(DTSide.right);
+		if (relative) {
+			leftEncBase = driveSubsystem.getEncoder(DTSide.left);
+			rightEncBase = driveSubsystem.getEncoder(DTSide.right);
+		}
 		
 		gyroBase = driveSubsystem.getGyroHeader();
 	}
@@ -50,20 +59,24 @@ public class DriveStraight_Angle extends CLCommand {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		int currLeftEnc = driveSubsystem.getEncoder(DTSide.left) - leftEncBase;
-		int currRightEnc = driveSubsystem.getEncoder(DTSide.right) - rightEncBase;
+		int currLeftEnc = Math.abs(driveSubsystem.getEncoder(DTSide.left) - leftEncBase);
+		int currRightEnc = Math.abs(driveSubsystem.getEncoder(DTSide.right) - rightEncBase);
 		
 		double leftSpeed = 0;
 		double rightSpeed = 0;
 		
-		if (currLeftEnc >= slowDownPoint || currRightEnc >= slowDownPoint) {
+		if (speedRamp && (currLeftEnc >= slowDownPoint || currRightEnc >= slowDownPoint)) {
 			//double velToSet = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, ( (currLeftEnc - slowDownPoint) / (targetTicks - slowDownPoint) )), 0.005, 1);
 			double encAverage = (currLeftEnc + currRightEnc) / 2;
 			//double encAverage = currRightEnc;
 			double tVar = (double)(encAverage - slowDownPoint) / (double)(targetTicks - slowDownPoint);
-			leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), 0.08, 1);
+			if (mainSpeed >= 0) {
+				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), 0.08, 1);
+			}
+			else {
+				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), -1, -0.08);
+			}
 			rightSpeed = leftSpeed;
-			
 		}
 		else {
 			// Set motor speeds
@@ -75,14 +88,14 @@ public class DriveStraight_Angle extends CLCommand {
 		SmartDashboard.putNumber("DriveStraightError", err);
 		
 		double offset = pGain * err;
-		rightSpeed -= offset;
-		leftSpeed += offset;
-		
-		driveSubsystem.setVelocity(leftSpeed, rightSpeed);
+		rightSpeed += offset;
+		leftSpeed -= offset;
 		
 		if (currLeftEnc >= targetTicks || currRightEnc >= targetTicks) {
 			finishedCommand = true;
 		}
+		
+		driveSubsystem.setVelocity(leftSpeed, rightSpeed);
 	}
 
 	// Called once after isFinished returns true

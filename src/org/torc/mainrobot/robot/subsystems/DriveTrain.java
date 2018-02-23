@@ -47,7 +47,7 @@ public class DriveTrain extends Subsystem {
 	 */
 	final double maxVelocity = 3500;
 	
-	final double voltageRampRate = 0.2;
+	final double voltageRampRate = 0.5;
 	
 	private boolean shifterState = false;
 	
@@ -155,8 +155,10 @@ public class DriveTrain extends Subsystem {
 	}
 	
 	public double getGyroHeader() {
-		double header = drivePigeon.getFusedHeading(fusionStatus);
+		// Negative to keep the "Negative angle turns left" code.
+		double header = -drivePigeon.getFusedHeading(fusionStatus);
 		
+		/*
 		// All of this division/checking code is to keep the angle wrapped around in -360 - 360deg increments
 		double div = header / 360;
 		if (div > 1) {
@@ -165,6 +167,7 @@ public class DriveTrain extends Subsystem {
 		else if (div < -1) {
 			header += (360 * Math.floor(Math.abs(div)));
 		}
+		*/
 		return header;
 	}
 	

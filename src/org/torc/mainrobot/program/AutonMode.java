@@ -19,9 +19,9 @@ public class AutonMode {
 		CommandList testCom = new CommandList();
 		testCom.addCommand(new TestAutonCommand("Going to start driving in a few seconds!!"));
 		//testCom.addCommand(new DriveStraight(RobotMap.DriveSubsystem, 100, 0.5));
-		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, 0));
-		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, 45));
-		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, -45));
+		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, 0, true, false));
+		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, -45, true, false));
+		testCom.addCommand(new DriveStraight_Angle(RobotMap.DriveSubsystem, 60, 0.3, 45, true, true));
 		testCom.start();
 	}
 	

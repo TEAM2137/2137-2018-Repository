@@ -27,6 +27,8 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	public final static int maxSoftLimit = 28345;
 	
+	public final static int posPerInch = 523;
+	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;
 	
@@ -52,7 +54,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
         elevator.configPeakOutputReverse(-1, 10);
 	}
 	
-	private static int GetElevatorPositions(ElevatorPositions position) {
+	public static int GetElevatorPositions(ElevatorPositions position) {
 		int toReturn = 0;
 		switch(position) {
 			case floor:

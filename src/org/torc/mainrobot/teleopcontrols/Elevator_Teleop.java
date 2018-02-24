@@ -7,6 +7,7 @@ import org.torc.mainrobot.program.ButtonMap.RCButtons;
 import org.torc.mainrobot.robot.ControlledStateMachine;
 import org.torc.mainrobot.robot.commands.UltraGrabber_Pickup;
 import org.torc.mainrobot.robot.commands.UltraGrabber_Pickup.PickupStates;
+import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
 
@@ -16,7 +17,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	
 	// Roughly 6 inches
 	// (and a smidge!!)
-	static int jogInterval = 3137;
+	static int jogInterval = Elevator.posPerInch * 6;
 	
 	private final int angleInc = 10;
 	

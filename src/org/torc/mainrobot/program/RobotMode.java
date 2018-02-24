@@ -35,6 +35,8 @@ public class RobotMode {
 		
 		RobotMap.GrabberSubsystem = new UltraGrabber(0, 1, 13, 1, 2);
 		
+		RobotMap.AutonSelect = new AutonSelector();
+		
 	}
 	
 	/**

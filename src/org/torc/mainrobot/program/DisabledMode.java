@@ -16,6 +16,8 @@ public class DisabledMode {
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.left);
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.right);
 		
+		RobotMap.AutonSelect = new AutonSelector();
+		
 	}
 	
 	public static void Periodic() {

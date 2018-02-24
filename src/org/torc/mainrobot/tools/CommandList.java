@@ -28,34 +28,43 @@ public class CommandList implements InheritedPeriodic {
 		comList.get(iPos).command.start();
 	}	
 	
-	public void addCommand(CLCommand command, boolean sequential) {
-		comList.add(new CommandListEntry(command, sequential));
+	public void addSequential(CLCommand command) {
+		comList.add(new CommandListEntry(command, true));
 	}
+	
+	public void addParallel(CLCommand command) {
+		comList.add(new CommandListEntry(command, false));
+	}
+	
+	private boolean endOfList = false;
 	
 	@Override
 	public void Periodic() {
-		// If list started
 		if (started) {
-			while ( !(iPos > comList.size() - 1) && !comList.get(iPos).isSequential ) {
+			while ( !endOfList && !comList.get(iPos).isSequential ) {
 				comList.get(iPos).command.start();
 				iPos++;
+				
+				if (iPos > comList.size() - 1) {
+					endOfList = true;
+				}
 			}
-			if(iPos > comList.size() - 1) {
+			
+			if (!endOfList && comList.get(iPos).isSequential) {
+				if (!comList.get(iPos).command.isFinished() && !comList.get(iPos).command.isRunning()) {
+					comList.get(iPos).command.start();
+				}
+				if (comList.get(iPos).command.isFinished()) {
+					iPos++;
+				}
+			}
+			
+			if (endOfList) {
 				iPos = 0;
 				started = false;
+				endOfList = false;
 				System.out.println("Stopped Commandlist!");
 				return;
-			}
-			// if the current command is finished
-			if (comList.get(iPos).command.isFinished()) {
-				iPos++;
-				if(iPos > comList.size() - 1) {
-					iPos = 0;
-					started = false;
-					System.out.println("Stopped Commandlist!");
-					return;
-				}
-				comList.get(iPos).command.start();
 			}
 		}
 	}

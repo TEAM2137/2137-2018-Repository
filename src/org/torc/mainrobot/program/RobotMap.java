@@ -51,4 +51,7 @@ public class RobotMap {
 	public static AnalogInput PNUPressure;
 	
 	public static PigeonIMU mainPigeon;
+	
+	public static AutonSelector AutonSelect;
+	
 }

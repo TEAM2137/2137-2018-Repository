@@ -3,6 +3,7 @@ package org.torc.mainrobot.robot.subsystems;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
+import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -22,7 +23,8 @@ public class DriveTrain extends Subsystem {
 	
 	public final double WheelDiameterIn = 6;
 	
-	public final double FullSpeedVelocity = 3500;
+	public final double VelFullHigh = 4800;
+	public final double VelFullLow = 1240;
 	
 	private TalonSRX rightMaster, rightSlave, leftMaster, leftSlave;
 
@@ -41,14 +43,9 @@ public class DriveTrain extends Subsystem {
 	final double quickTurnSensitivity = 0.7;
 	final double speedTurnSensitivity = 0.7;
 	
-	/**
-	 * Maximum desired velocity for movement control
-	 * (What full speed should be).
-	 */
-	final double maxVelocity = 3500;
+	final double voltageRampRate = 0.2;
 	
-	final double voltageRampRate = 0.5;
-	
+	// True is low gear
 	private boolean shifterState = false;
 	
 	public enum DTSide {left, right}
@@ -59,8 +56,8 @@ public class DriveTrain extends Subsystem {
 		leftMaster = new TalonSRX(leftMasterPort);
 		leftSlave = new TalonSRX(leftSlavePort);
 		// Config master Talons
-		MotorControllers.TalonSRXConfig(rightMaster, 10, 0, 0, 0, 0.5, 0, 0);
-		MotorControllers.TalonSRXConfig(leftMaster, 10, 0, 0, 0, 0.5, 0, 0);
+		MotorControllers.TalonSRXConfig(rightMaster, 10, 0, 0, 0, 0, 0, 0);
+		MotorControllers.TalonSRXConfig(leftMaster, 10, 0, 0, 0, 0, 0, 0);
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		
@@ -97,16 +94,27 @@ public class DriveTrain extends Subsystem {
 		shifterState = shift;
 		rightShifter.set(shift);
 		leftShifter.set(shift);
+		
+		// Remember: shifterState as true means low gear
+		double kFVal = shifterState?0.82:0.21;
+		rightMaster.config_kF(0, kFVal, 10);
+		leftMaster.config_kF(0, kFVal, 10);
+		
+		double kPVal = shifterState?0.83:0.0802;
+		rightMaster.config_kP(0, kPVal, 10);
+		leftMaster.config_kP(0, kPVal, 10);
+		
+		System.out.println("ShifterVal: " + shift);
 	}
 	
 	public void setVelocity(double leftSide, double rightSide) {
-		leftSide = MathExtra.clamp(leftSide, -1, 1) * FullSpeedVelocity;
+		leftSide = MathExtra.clamp(leftSide, -1, 1) * (shifterState?VelFullLow:VelFullHigh);
 		leftMaster.set(ControlMode.Velocity, leftSide);
 		if (leftSlave.getControlMode() != ControlMode.Follower) {
 			leftSlave.set(ControlMode.Follower, leftMaster.getDeviceID());
 		}
 		
-		rightSide = MathExtra.clamp(rightSide, -1, 1) * FullSpeedVelocity;
+		rightSide = MathExtra.clamp(rightSide, -1, 1) * (shifterState?VelFullLow:VelFullHigh);
 		rightMaster.set(ControlMode.Velocity, rightSide);
 		if (rightSlave.getControlMode() != ControlMode.Follower) {
 			rightSlave.set(ControlMode.Follower, rightMaster.getDeviceID());
@@ -151,6 +159,8 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("leftEncoder", leftMaster.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("RightEVel", rightMaster.getSelectedSensorVelocity(0));
+		
+		SmartDashboard.putNumber("currSpeed", rightMaster.getSelectedSensorVelocity(0));
 		
 	}
 	

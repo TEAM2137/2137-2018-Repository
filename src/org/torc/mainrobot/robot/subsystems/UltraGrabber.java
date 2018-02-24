@@ -34,15 +34,12 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	// TODO: change temportary speeds to final
 	public enum GrabberSpeeds { none, cubeKeep, pickup, dropping, shooting }
 	
-	private final static double angleMult = 4521;
+	public final static double angleMult = 4521;
 	
-	private final static double ticksMin = -18 * angleMult;
+	private final static double ticksMin = -28 * angleMult;
 	private final static double ticksMax = 70 * angleMult;
 	
 	private double targetAngle = 0;
-	
-	// TODO: remove later after testing
-	private static double grabTarget = 0;
 
 	public UltraGrabber(int leftVictorPort, int rightVictorPort, int angleTalonPort, int endstopPort, int cubePhotoeyePort) {
 		// Add to periodic list
@@ -68,11 +65,11 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	 * @param position
 	 * @return The position of the grabber state in encoder ticks.
 	 */
-	private static double GetGrabberPositions(GrabberPositions position) {
+	public static double GetGrabberPositions(GrabberPositions position) {
 		int toReturn = 0;
 		switch(position) {
 			case up:
-				toReturn = -18;
+				toReturn = -28;
 				break;
 			case pickup:
 				toReturn = 70; //75
@@ -81,16 +78,16 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = 60;
 				break;
 			case shooting:
-				toReturn = 45;
+				toReturn = 8;
 				break;
 		}
 		SmartDashboard.putNumber("GrabberTarget", (toReturn * angleMult));
-		grabTarget = (toReturn * angleMult);
+		//grabTarget = (toReturn * angleMult);
 		// Convert degrees from lookup to encoder ticks
 		return (toReturn * angleMult);
 	}
 	
-	private static double GetGrabberSpeeds(GrabberSpeeds speed) {
+	public static double GetGrabberSpeeds(GrabberSpeeds speed) {
 		double toReturn = 0;
 		switch(speed) {
 			case none:
@@ -202,6 +199,5 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 			hasBeenHomed = true;
 			findGrabberPosition(GrabberPositions.up);
 		}
-		SmartDashboard.putNumber("GrabberError", (getEncoder() - grabTarget));
 	}
 }

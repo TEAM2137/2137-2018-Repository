@@ -93,7 +93,7 @@ public class DriveStraight_Angle extends CLCommand {
 			rightSpeed = mainSpeed;
 		}
 		
-		double err = (gyroVal - gyroBase) - angleTarget;
+		double err = MathExtra.clamp((gyroVal - gyroBase) - angleTarget, -20, 20);
 		SmartDashboard.putNumber("DriveStraightError", err);
 		
 		// Add to error sum for Integral

@@ -22,7 +22,12 @@ public class DriveStraight_Angle extends CLCommand {
 	
 	private int slowDownPoint = 0;
 	
-	private final double pGain = 0.01;//0.045;
+	private double errSum = 0;
+	private double dLastPos = 0;
+	
+	private final double pGain = 0.09;//0.045;
+	private final double iGain = 0;
+	private final double dGain = 0.68;//0.1;
 	
 	private double angleTarget = 0;
 	
@@ -54,6 +59,8 @@ public class DriveStraight_Angle extends CLCommand {
 		}
 		
 		gyroBase = driveSubsystem.getGyroHeader();
+		
+		dLastPos = gyroBase;
 	}
 	
 	// Called repeatedly when this Command is scheduled to run
@@ -64,6 +71,8 @@ public class DriveStraight_Angle extends CLCommand {
 		
 		double leftSpeed = 0;
 		double rightSpeed = 0;
+		
+		double gyroVal = driveSubsystem.getGyroHeader();
 		
 		if (speedRamp && (currLeftEnc >= slowDownPoint || currRightEnc >= slowDownPoint)) {
 			//double velToSet = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, ( (currLeftEnc - slowDownPoint) / (targetTicks - slowDownPoint) )), 0.005, 1);
@@ -84,12 +93,17 @@ public class DriveStraight_Angle extends CLCommand {
 			rightSpeed = mainSpeed;
 		}
 		
-		double err = (driveSubsystem.getGyroHeader() - gyroBase) - angleTarget;
+		double err = (gyroVal - gyroBase) - angleTarget;
 		SmartDashboard.putNumber("DriveStraightError", err);
 		
-		double offset = pGain * err;
+		// Add to error sum for Integral
+		errSum += err;
+		
+		double offset = (pGain * err) + (errSum * iGain) + (dGain * (gyroVal - dLastPos));
 		rightSpeed += offset;
 		leftSpeed -= offset;
+		
+		dLastPos = gyroVal;
 		
 		if (currLeftEnc >= targetTicks || currRightEnc >= targetTicks) {
 			finishedCommand = true;

@@ -13,7 +13,7 @@ import org.torc.mainrobot.robot.Robot;
  */
 public class CommandList implements InheritedPeriodic {
 	
-	private ArrayList<CLCommand> comList = new ArrayList<CLCommand>();
+	private ArrayList<CommandListEntry> comList = new ArrayList<CommandListEntry>();
 	
 	private int iPos = 0;
 	
@@ -25,19 +25,29 @@ public class CommandList implements InheritedPeriodic {
 	
 	public void start() {
 		started = true;
-		comList.get(iPos).start();
+		comList.get(iPos).command.start();
 	}	
 	
-	public void addCommand(CLCommand command) {
-		comList.add(command);
+	public void addCommand(CLCommand command, boolean sequential) {
+		comList.add(new CommandListEntry(command, sequential));
 	}
 	
 	@Override
 	public void Periodic() {
 		// If list started
 		if (started) {
+			while ( !(iPos > comList.size() - 1) && !comList.get(iPos).isSequential ) {
+				comList.get(iPos).command.start();
+				iPos++;
+			}
+			if(iPos > comList.size() - 1) {
+				iPos = 0;
+				started = false;
+				System.out.println("Stopped Commandlist!");
+				return;
+			}
 			// if the current command is finished
-			if (comList.get(iPos).isFinished()) {
+			if (comList.get(iPos).command.isFinished()) {
 				iPos++;
 				if(iPos > comList.size() - 1) {
 					iPos = 0;
@@ -45,8 +55,19 @@ public class CommandList implements InheritedPeriodic {
 					System.out.println("Stopped Commandlist!");
 					return;
 				}
-				comList.get(iPos).start();
+				comList.get(iPos).command.start();
 			}
 		}
 	}
+}
+
+class CommandListEntry {
+	CLCommand command;
+	boolean isSequential;
+	
+	CommandListEntry(CLCommand comm, boolean sequential) {
+		command = comm;
+		isSequential = sequential;
+	}
+	
 }

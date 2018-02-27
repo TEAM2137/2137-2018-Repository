@@ -36,6 +36,10 @@ public class CommandList implements InheritedPeriodic {
 		comList.add(new CommandListEntry(command, false));
 	}
 	
+	public int getListLength() {
+		return comList.size();
+	}
+	
 	private boolean endOfList = false;
 	
 	@Override

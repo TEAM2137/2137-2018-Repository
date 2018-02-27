@@ -1,7 +1,5 @@
 package org.torc.mainrobot.program;
 
-import java.nio.channels.SelectableChannel;
-
 import org.torc.mainrobot.program.ButtonMap.GetType;
 import org.torc.mainrobot.program.ButtonMap.RCButtons;
 import org.torc.mainrobot.robot.InheritedPeriodic;
@@ -23,14 +21,18 @@ public class AutonSelector implements InheritedPeriodic {
 	
 	private AutonPriority autonPriority = AutonPriority.sw1tch;
 	
-	CommandList autonList;
+	private CommandList autonList;
 	
 	public AutonSelector() {
 		Robot.AddToPeriodic(this);
 	}
 	
 	public void startAuton() {
-		
+		if (autonList == null || autonList.getListLength() == 0) {
+			System.out.println("Cannot start AutonSelector list!!");
+			return;
+		}
+		autonList.start();
 	}
 
 	private int buttonTime = 0;
@@ -65,16 +67,16 @@ public class AutonSelector implements InheritedPeriodic {
 		
 		if (selectMove) {
 			if (selectLeft) {
-				startPos = StartPositions.values()[MathExtra.clamp(startPos.ordinal()-1, 0, StartPositions.values().length - 1)];
+				startPos = StartPositions.values()[MathExtra.clamp(startPos.ordinal() - 1, 0, StartPositions.values().length - 1)];
 			}
 			else if (selectRight) {
-				startPos = StartPositions.values()[MathExtra.clamp(startPos.ordinal()+1, 0, StartPositions.values().length - 1)];
+				startPos = StartPositions.values()[MathExtra.clamp(startPos.ordinal() + 1, 0, StartPositions.values().length - 1)];
 			}
 			else if (selectUp) {
-				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal()+1, 0, AutonPriority.values().length - 1)];
+				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal() + 1, 0, AutonPriority.values().length - 1)];
 			}
 			else if (selectDown) {
-				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal()-1, 0, AutonPriority.values().length - 1)];
+				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal() - 1, 0, AutonPriority.values().length - 1)];
 			}
 		}
 		

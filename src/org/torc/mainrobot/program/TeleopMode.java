@@ -4,8 +4,6 @@ import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 import org.torc.mainrobot.teleopcontrols.DriveTrain_Teleop;
 import org.torc.mainrobot.teleopcontrols.Elevator_Teleop;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TeleopMode {

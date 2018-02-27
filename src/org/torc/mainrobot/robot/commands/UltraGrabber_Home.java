@@ -1,6 +1,5 @@
 package org.torc.mainrobot.robot.commands;
 
-import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber;
 
 import edu.wpi.first.wpilibj.command.Command;

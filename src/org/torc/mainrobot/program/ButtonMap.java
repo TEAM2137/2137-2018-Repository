@@ -2,7 +2,6 @@ package org.torc.mainrobot.program;
 
 import org.torc.mainrobot.tools.MathExtra;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 

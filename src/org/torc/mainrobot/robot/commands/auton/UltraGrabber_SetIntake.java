@@ -1,7 +1,6 @@
 package org.torc.mainrobot.robot.commands.auton;
 
 import org.torc.mainrobot.robot.subsystems.UltraGrabber;
-import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
 import org.torc.mainrobot.tools.CLCommand;
 

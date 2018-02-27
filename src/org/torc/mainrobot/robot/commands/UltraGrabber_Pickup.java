@@ -1,7 +1,6 @@
 package org.torc.mainrobot.robot.commands;
 
 import org.torc.mainrobot.program.RobotMap;
-import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;

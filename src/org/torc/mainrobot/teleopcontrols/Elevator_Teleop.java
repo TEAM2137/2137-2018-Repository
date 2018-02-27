@@ -11,15 +11,11 @@ import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class Elevator_Teleop extends ControlledStateMachine {
 	
 	// Roughly 6 inches
 	// (and a smidge!!)
 	static int jogInterval = Elevator.posPerInch * 6;
-	
-	private final int angleInc = 10;
 	
 	/*
 	private enum GrabberStates { operatorControl, pickup }

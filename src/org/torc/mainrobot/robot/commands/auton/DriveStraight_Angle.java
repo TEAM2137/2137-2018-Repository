@@ -1,12 +1,10 @@
 package org.torc.mainrobot.robot.commands.auton;
 
-import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.subsystems.DriveTrain;
 import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 import org.torc.mainrobot.tools.CLCommand;
 import org.torc.mainrobot.tools.MathExtra;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveStraight_Angle extends CLCommand {

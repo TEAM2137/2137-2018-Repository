@@ -4,6 +4,8 @@ import org.torc.mainrobot.tools.MathExtra;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -143,5 +145,61 @@ public class ButtonMap {
 		}
 		
 		return toReturn;
+	}
+	
+	public void setDualRumbleTime(double value, double time) {
+		ControllerRumble cRumb = new ControllerRumble(this, value, time);
+		cRumb.start();
+	}
+	
+	public void setDualRumble(double value) {
+		mController.setRumble(RumbleType.kLeftRumble, value);
+		mController.setRumble(RumbleType.kRightRumble, value);
+	}
+}
+
+class ControllerRumble extends Command {
+
+	private ButtonMap controller;
+	
+	private double rumbleTime;
+	private double rumbleVal;
+	
+	private int timeCount = 0;
+	
+	private boolean isFinished = false;
+	
+	/**
+	 * @param cont
+	 * @param time
+	 * Amount of time (in seconds) for the controller to rumble.
+	 */
+	public ControllerRumble(ButtonMap cont, double value, double time) {
+		controller = cont;
+		rumbleTime = time;
+		rumbleVal = value;
+	}
+	
+	// Called just before this Command runs the first time
+	@Override
+	protected void initialize() {
+		controller.setDualRumble(rumbleVal);
+	}
+
+	// Called repeatedly when this Command is scheduled to run
+	@Override
+	protected void execute() {
+		if ( (timeCount / 50) >= rumbleTime ) {
+			controller.setDualRumble(0);
+			isFinished = true;
+		}
+		
+		timeCount++;
+	}
+
+	@Override
+	protected boolean isFinished() {
+		// TODO Auto-generated method stub
+		return isFinished;
 	}
 }

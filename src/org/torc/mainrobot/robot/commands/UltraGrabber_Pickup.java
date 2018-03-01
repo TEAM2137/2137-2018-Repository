@@ -1,6 +1,7 @@
 package org.torc.mainrobot.robot.commands;
 
 import org.torc.mainrobot.program.RobotMap;
+import org.torc.mainrobot.program.ButtonMap.RCAxis;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
@@ -52,12 +53,20 @@ public class UltraGrabber_Pickup extends Command {
 				SmartDashboard.putNumber("PickupEndstopCount", endStopCount);
 				
 				if (endStopCount >= endStopWait) {
+					RobotMap.driverControl.setDualRumbleTime(0.5, 0.5);
+					RobotMap.operatorControl.setDualRumbleTime(0.5, 0.5);
 					state = PickupStates.raiseGrabber;
 				}
 				break;
 			case raiseGrabber:
+				double jogVal = RobotMap.operatorControl.getAxis(RCAxis.grabberJog);
+				/* If operator is holding jog down while command completes, 
+				 * don't auto position the grabber up
+				 */
+				if (!(jogVal > 0.2)) {
+					RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
+				}
 				RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.cubeKeep);
-				RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
 				isFinished = true;
 				break;
 		}

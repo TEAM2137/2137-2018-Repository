@@ -32,6 +32,7 @@ public class AutonSelector implements InheritedPeriodic {
 			System.out.println("Cannot start AutonSelector list!!");
 			return;
 		}
+		AutonDatabase.GetAuton(autonList, startPos, autonPriority);
 		autonList.start();
 	}
 

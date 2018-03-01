@@ -26,7 +26,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	public final static int maxSoftLimit = 28345;
 	
-	public final static int posPerInch = 523;
+	public final static int posPerInch = 502; //523;
 	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;
@@ -63,7 +63,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 				toReturn = 11745;
 				break;
 			case high:
-				toReturn = 25287;
+				toReturn = 26840;
 				break;
 		}
 		return toReturn;
@@ -88,6 +88,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	 */
 	public void deHome() {
 		hasBeenHomed = false;
+		targetPosition = 0;
 		System.out.println("Elevator De-Homed!!");
 	}
 	
@@ -166,7 +167,8 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		}
 		// Print Encoders
 		printEncoder();
-
+		
+		SmartDashboard.putNumber("ElevatorError", elevator.getSelectedSensorPosition(0) - targetPosition);
 	}
 	
 }

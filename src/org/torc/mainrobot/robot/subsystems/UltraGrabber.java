@@ -69,7 +69,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		int toReturn = 0;
 		switch(position) {
 			case up:
-				toReturn = -28;
+				toReturn = -20;//-28;
 				break;
 			case pickup:
 				toReturn = 70; //75

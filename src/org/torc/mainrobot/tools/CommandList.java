@@ -24,9 +24,22 @@ public class CommandList implements InheritedPeriodic {
 	}
 	
 	public void start() {
+		if (!started) {
+			System.out.println("CommandList already started!!");
+			return;
+		}
 		started = true;
 		comList.get(iPos).command.start();
 	}	
+	
+	public void end() {
+		if (comList.size() >= 1) {
+			comList.get(iPos).command.cancel();
+		}		
+		iPos = 0;
+		started = false;
+		endOfList = false;
+	}
 	
 	public void addSequential(CLCommand command) {
 		comList.add(new CommandListEntry(command, true));
@@ -38,6 +51,10 @@ public class CommandList implements InheritedPeriodic {
 	
 	public int getListLength() {
 		return comList.size();
+	}
+	
+	public boolean getStarted() {
+		return started;
 	}
 	
 	private boolean endOfList = false;

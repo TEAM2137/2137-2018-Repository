@@ -15,7 +15,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	
 	// Roughly 6 inches
 	// (and a smidge!!)
-	static int jogInterval = Elevator.posPerInch * 6;
+	static int jogInterval = (int)((double)Elevator.posPerInch * (11 / 3));
 	
 	/*
 	private enum GrabberStates { operatorControl, pickup }
@@ -51,23 +51,23 @@ public class Elevator_Teleop extends ControlledStateMachine {
 		// Operator buttons all have override over other functions
 		if (RobotMap.operatorControl.getButton(RCButtons.elevLow, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.floor);
-			operatorInterrupt();
+			//operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.elevMid, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.middle);
-			operatorInterrupt();
+			//operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.elevHigh, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.high);
-			operatorInterrupt();
+			//operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorUp, GetType.pressed)) {
 			RobotMap.ElevSubsystem.jogElevatorPos(jogInterval);
-			operatorInterrupt();
+			//operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, GetType.pressed)) {
 			RobotMap.ElevSubsystem.jogElevatorPos(-jogInterval);
-			operatorInterrupt();
+			//operatorInterrupt();
 		}
 		
 		
@@ -88,7 +88,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 		double jogVal = RobotMap.operatorControl.getAxis(RCAxis.grabberJog);
 		if (jogVal > 0.2 || jogVal < -0.2) {
 			RobotMap.GrabberSubsystem.jogGrabberPosInc(jogVal * 2);
-			operatorInterrupt();
+			//operatorInterrupt();
 		}
 		
 	}

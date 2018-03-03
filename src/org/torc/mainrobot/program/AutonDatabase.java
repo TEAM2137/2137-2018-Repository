@@ -101,17 +101,24 @@ public class AutonDatabase {
 		
 		boolean samePlate = (GameData[0] == lookingFor && GameData[1] == lookingFor);
 		
-		// First plate goto
-		if ((GameData[0] == lookingFor && GameData[1] != lookingFor) || (samePlate && )) {
+		// switch goto
+		if ((GameData[0] == lookingFor && GameData[1] != lookingFor) || (samePlate && AutonPri == AutonPriority.sw1tch)) {
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 137, 0.25, 0, true, false));
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 12, 0.25, isRight?-90:90, true, true));
 			// TODO: Add cube dropoff
 		}
-		// Second plate goto
-		else if ((GameData[0] != lookingFor && GameData[1] == lookingFor) || samePlate) {
+		// scale goto
+		else if ((GameData[0] != lookingFor && GameData[1] == lookingFor) || (samePlate && AutonPri == AutonPriority.scale)) {
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 260, 0.25, 0, true, true));
 			// TODO: Add cube dropoff
 		}
+		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 214, 0.25, 0, true, false));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 77, 0.25, isRight?-90:90, true, false));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 46, 0.25, isRight?90:-90, true, true));
+			// TODO: Add cube dropoff
+		}
+		
 		
 	}
 }

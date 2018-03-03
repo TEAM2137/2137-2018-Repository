@@ -193,7 +193,6 @@ class ControllerRumble extends Command {
 			controller.setDualRumble(0);
 			isFinished = true;
 		}
-		
 		timeCount++;
 	}
 

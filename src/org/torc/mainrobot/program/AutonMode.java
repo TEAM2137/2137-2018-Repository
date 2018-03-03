@@ -25,9 +25,10 @@ public class AutonMode {
 		RobotMap.GrabberSubsystem.homeGrabber();
 		RobotMap.ElevSubsystem.homeElevator();
 		
+		RobotMap.AutonSelect.getAuton();
 		RobotMap.AutonSelect.startAuton();
 		
-		CommandList testCom = new CommandList();
+		//CommandList testCom = new CommandList();
 		//testCom.addSequential(new TestAutonCommand("Going to start driving in a few seconds!!"));
 		
 		/*
@@ -47,7 +48,7 @@ public class AutonMode {
 		testCom.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 42, 0.25, 0, true, true));
 		testCom.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 		*/
-		testCom.start();
+		//testCom.start();
 	}
 	
 	public static void Periodic() {

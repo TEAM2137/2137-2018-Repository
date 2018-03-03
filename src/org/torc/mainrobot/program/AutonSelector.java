@@ -15,7 +15,7 @@ public class AutonSelector implements InheritedPeriodic {
 	
 	public enum StartPositions { left, center, right }
 	
-	public enum AutonPriority { sw1tch, scale }
+	public enum AutonPriority { sw1tch, scale } 
 	
 	private StartPositions startPos = StartPositions.center;
 	
@@ -27,12 +27,16 @@ public class AutonSelector implements InheritedPeriodic {
 		Robot.AddToPeriodic(this);
 	}
 	
+	public void getAuton() {
+		autonList = new CommandList();
+		AutonDatabase.GetAuton(autonList, startPos, autonPriority);
+	}
+	
 	public void startAuton() {
 		if (autonList == null || autonList.getListLength() == 0) {
 			System.out.println("Cannot start AutonSelector list!!");
 			return;
 		}
-		AutonDatabase.GetAuton(autonList, startPos, autonPriority);
 		autonList.start();
 	}
 

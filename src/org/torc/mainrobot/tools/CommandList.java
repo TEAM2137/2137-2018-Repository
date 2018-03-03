@@ -13,6 +13,8 @@ import org.torc.mainrobot.robot.Robot;
  */
 public class CommandList implements InheritedPeriodic {
 	
+	private static ArrayList<CommandList> CommandLists = new ArrayList<CommandList>();
+	
 	private ArrayList<CommandListEntry> comList = new ArrayList<CommandListEntry>();
 	
 	private int iPos = 0;
@@ -21,10 +23,19 @@ public class CommandList implements InheritedPeriodic {
 	
 	public CommandList() {
 		Robot.AddToPeriodic(this);
+		CommandLists.add(this);
+	}
+	
+	public static void StopAllCommandLists() {
+		for (CommandList cList : CommandLists) {
+			if (cList.started) {
+				cList.end();
+			}
+		}
 	}
 	
 	public void start() {
-		if (!started) {
+		if (started) {
 			System.out.println("CommandList already started!!");
 			return;
 		}

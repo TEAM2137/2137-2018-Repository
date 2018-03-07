@@ -1,17 +1,6 @@
 package org.torc.mainrobot.program;
 
-import org.torc.mainrobot.robot.commands.auton.DriveStraight_Angle;
-import org.torc.mainrobot.robot.commands.auton.Elevator_Jog;
-import org.torc.mainrobot.robot.commands.auton.TestAutonCommand;
-import org.torc.mainrobot.robot.commands.auton.UltraGrabber_Angle;
-import org.torc.mainrobot.robot.commands.auton.UltraGrabber_SetIntake;
-import org.torc.mainrobot.robot.commands.auton.UltraGrabber_SpitCube;
-import org.torc.mainrobot.robot.commands.auton.UltraGrabber_SpitCube.SpitSpeeds;
 import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
-import org.torc.mainrobot.robot.subsystems.Elevator;
-import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
-import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
-import org.torc.mainrobot.tools.CommandList;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,8 +11,9 @@ public class AutonMode {
 	
 	public static void Init() {
 		//RobotMap.DriveSubsystem.zeroGyro();
-		RobotMap.GrabberSubsystem.homeGrabber();
+		//RobotMap.GrabberSubsystem.homeGrabber();
 		RobotMap.ElevSubsystem.homeElevator();
+		RobotMap.GrabberSubsystem.homeGrabber();
 		
 		RobotMap.AutonSelect.getAuton();
 		RobotMap.AutonSelect.startAuton();

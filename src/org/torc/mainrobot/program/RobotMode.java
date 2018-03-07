@@ -1,5 +1,7 @@
 package org.torc.mainrobot.program;
 
+import org.torc.mainrobot.robot.subsystems.ClimbHook;
+import org.torc.mainrobot.robot.subsystems.ClimbRamp;
 import org.torc.mainrobot.robot.subsystems.DriveTrain;
 import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber;
@@ -37,6 +39,9 @@ public class RobotMode {
 		
 		RobotMap.AutonSelect = new AutonSelector();
 		
+		RobotMap.ClimbingHook = new ClimbHook(2);
+		
+		RobotMap.ClimbingRamp = new ClimbRamp(3);
 	}
 	
 	/**

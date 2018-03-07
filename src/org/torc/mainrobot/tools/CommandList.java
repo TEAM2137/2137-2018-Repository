@@ -88,6 +88,10 @@ public class CommandList implements InheritedPeriodic {
 				}
 				if (comList.get(iPos).command.isFinished()) {
 					iPos++;
+					
+					if (iPos > comList.size() - 1) {
+						endOfList = true;
+					}
 				}
 			}
 			

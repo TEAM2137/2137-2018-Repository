@@ -24,7 +24,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private TalonSRX elevator;
 	
-	public final static int maxSoftLimit = 28345;
+	public final static int maxSoftLimit = 25297;//28345;
 	
 	public final static int posPerInch = 502; //523;
 	
@@ -60,7 +60,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 				toReturn = 0;
 				break;
 			case middle:
-				toReturn = 11745;
+				toReturn = 17769;
 				break;
 			case high:
 				toReturn = 26840;
@@ -169,6 +169,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		printEncoder();
 		
 		SmartDashboard.putNumber("ElevatorError", elevator.getSelectedSensorPosition(0) - targetPosition);
+		SmartDashboard.putBoolean("ElevatorEndstop", endstop.get());
 	}
 	
 }

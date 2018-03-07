@@ -2,6 +2,7 @@ package org.torc.mainrobot.robot.commands;
 
 import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.program.ButtonMap.RCAxis;
+import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
@@ -65,6 +66,7 @@ public class UltraGrabber_Pickup extends Command {
 				 */
 				if (!(jogVal > 0.2)) {
 					RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
+					RobotMap.ElevSubsystem.jogElevatorPos(Elevator.posPerInch * 3);
 				}
 				RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.cubeKeep);
 				isFinished = true;
@@ -77,16 +79,5 @@ public class UltraGrabber_Pickup extends Command {
 	@Override
 	public boolean isFinished() {
 		return isFinished;
-	}
-
-	// Called once after isFinished returns true
-	@Override
-	protected void end() {
-	}
-
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
-	@Override
-	protected void interrupted() {
 	}
 }

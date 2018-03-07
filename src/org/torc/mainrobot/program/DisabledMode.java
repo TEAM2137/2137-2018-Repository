@@ -19,6 +19,8 @@ public class DisabledMode {
 		// zero encoders for testing
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.left);
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.right);
+		// Zero gyro
+		//RobotMap.DriveSubsystem.zeroGyro();
 		
 		RobotMap.AutonSelect = new AutonSelector();
 		

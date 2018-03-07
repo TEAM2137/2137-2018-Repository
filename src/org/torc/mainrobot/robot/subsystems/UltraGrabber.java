@@ -1,7 +1,7 @@
 package org.torc.mainrobot.robot.subsystems;
 
 import org.torc.mainrobot.robot.InheritedPeriodic;
-import org.torc.mainrobot.robot.commands.UltraGrabber_Home;
+import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
@@ -26,7 +26,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 	private DigitalInput endstop, cubeEye;
 	
-	private  UltraGrabber_Home grabberHomer;
+	private  UltraGrabber_Homing grabberHomer;
 	
 	private boolean hasBeenHomed = false;
 	// TODO: change temportary positions to final
@@ -148,7 +148,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		if (hasBeenHomed) {
 			deHome();
 		}
-		grabberHomer = new UltraGrabber_Home(this);
+		grabberHomer = new UltraGrabber_Homing(this);
 		grabberHomer.start();
 	}
 	
@@ -175,7 +175,9 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public boolean getCubeEye() {
-		return !cubeEye.get();
+		// Practice bot: 
+		// return !cubeEye.get();
+		return cubeEye.get();
 	}
 	
 	public int getEncoder() {
@@ -192,12 +194,71 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 
 	@Override
 	public void Periodic() {
-		if (!hasBeenHomed && grabberHomer != null && grabberHomer.isFinished()) {
+		if (!hasBeenHomed && grabberHomer != null && grabberHomer.isHomed()) {
 			System.out.println("Grabber Homed!!");
-			grabberHomer.free();
 			grabberHomer = null;
 			hasBeenHomed = true;
 			findGrabberPosition(GrabberPositions.up);
 		}
 	}
 }
+
+class UltraGrabber_Homing implements InheritedPeriodic {
+	
+	enum HomingStates { firstMoveDown, secondMoveUp }
+	
+	HomingStates homingState = HomingStates.firstMoveDown;
+	
+	UltraGrabber grabberSubsys;
+	
+	private boolean started = false;
+	
+	private boolean isFinished = false;
+	
+	double firstMoveDownPerc = 0.5;
+	double secondMoveUpPerc = 0.1;
+	
+	public UltraGrabber_Homing(UltraGrabber grabber) {
+		Robot.AddToPeriodic(this);
+		
+		grabberSubsys = grabber;
+	}
+
+	public void start() {
+		started = true;
+	}
+	
+	public boolean isHomed() {
+		return isFinished;
+	}
+	
+	@Override
+	public void Periodic() {
+		if (started) {
+			switch (homingState) {
+			case firstMoveDown:
+				grabberSubsys.jogGrabberPerc(-firstMoveDownPerc);
+				if (grabberSubsys.getEndstop()) {
+					System.out.println("grabber firstMoveDown Done!");
+					homingState = HomingStates.secondMoveUp;
+				}
+				break;
+			case secondMoveUp:
+				grabberSubsys.jogGrabberPerc(secondMoveUpPerc);
+				if (!grabberSubsys.getEndstop()) {
+					System.out.println("grabber secondMoveUp Done!");
+					grabberSubsys.zeroEncoder();
+					grabberSubsys.jogGrabberPerc(0);
+					isFinished = true;
+				}
+				break;
+			}
+		}
+		
+		if (isFinished) {
+			started = false;
+		}
+	}
+	
+}
+

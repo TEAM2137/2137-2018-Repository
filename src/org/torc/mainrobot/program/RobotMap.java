@@ -54,4 +54,8 @@ public class RobotMap {
 	
 	public static AutonSelector AutonSelect;
 	
+	public static ClimbRamp ClimbingRamp;
+	
+	public static ClimbHook ClimbingHook;
+	
 }

@@ -23,7 +23,7 @@ public class DriveStraight_Angle extends CLCommand {
 	private double errSum = 0;
 	private double dLastPos = 0;
 	
-	private final double pGain = 0.09;//0.045;
+	private final double pGain = 0.045;//0.045;
 	private final double iGain = 0;
 	private final double dGain = 0.68;//0.1;
 	
@@ -114,7 +114,12 @@ public class DriveStraight_Angle extends CLCommand {
 	@Override
 	protected void end() {
 		System.out.println("Finished driving!");
-		driveSubsystem.setPercVBus(0, 0);
+		if (speedRamp) {
+			driveSubsystem.setVelocity(0, 0);
+		}
+		else {
+			driveSubsystem.setPercVBus(0, 0);
+		}
 	}
 
 	// Called when another command which requires one or more of the same

@@ -1,5 +1,7 @@
 package org.torc.mainrobot.robot.subsystems;
 
+import org.torc.mainrobot.robot.InheritedPeriodic;
+import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
@@ -12,7 +14,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveTrain extends Subsystem {
+public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	/**
 	 * The amount of encoder ticks it takes 
 	 * for the driveline to do a full rotation.
@@ -41,7 +43,7 @@ public class DriveTrain extends Subsystem {
 	final double quickTurnSensitivity = 0.7;
 	final double speedTurnSensitivity = 0.7;
 	
-	final double voltageRampRate = 0.2;
+	final double voltageRampRateHigh = 0.2;
 	
 	// True is low gear
 	private boolean shifterState = false;
@@ -49,6 +51,9 @@ public class DriveTrain extends Subsystem {
 	public enum DTSide {left, right}
 	
 	public DriveTrain(int rightMasterPort, int rightSlavePort, int leftMasterPort, int leftSlavePort, int pigeonPort) {
+		// Add to periodic list
+		Robot.AddToPeriodic(this);
+		
 		rightMaster = new TalonSRX(rightMasterPort);
 		rightSlave = new TalonSRX(rightSlavePort);
 		leftMaster = new TalonSRX(leftMasterPort);
@@ -59,10 +64,10 @@ public class DriveTrain extends Subsystem {
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		
-		rightMaster.configOpenloopRamp(voltageRampRate, 10);
-		rightSlave.configOpenloopRamp(voltageRampRate, 10);
-		leftMaster.configOpenloopRamp(voltageRampRate, 10);
-		leftSlave.configOpenloopRamp(voltageRampRate, 10);
+		rightMaster.configOpenloopRamp(voltageRampRateHigh, 10);
+		rightSlave.configOpenloopRamp(voltageRampRateHigh, 10);
+		leftMaster.configOpenloopRamp(voltageRampRateHigh, 10);
+		leftSlave.configOpenloopRamp(voltageRampRateHigh, 10);
 		
 		// Flip left sensor
 		leftMaster.setSensorPhase(true);
@@ -102,6 +107,12 @@ public class DriveTrain extends Subsystem {
 		rightMaster.config_kP(0, kPVal, 10);
 		leftMaster.config_kP(0, kPVal, 10);
 		
+		double kRampVal = shifterState?(voltageRampRateHigh*3):voltageRampRateHigh;
+		rightMaster.configOpenloopRamp(kRampVal, 10);
+		rightSlave.configOpenloopRamp(kRampVal, 10);
+		leftMaster.configOpenloopRamp(kRampVal, 10);
+		leftSlave.configOpenloopRamp(kRampVal, 10);
+		
 		System.out.println("ShifterVal: " + shift);
 	}
 	
@@ -127,9 +138,15 @@ public class DriveTrain extends Subsystem {
 		rightSlave.set(ControlMode.PercentOutput, rightSide);
 	}
 	
-	public void haloDrive(double throttle, double wheel) {
-		double driverThrottle = MathExtra.applyDeadband(throttle, 0.2);
-		double driverWheel = MathExtra.applyDeadband(wheel, 0.2);
+	public void haloDrive(double throttle, double wheel, boolean squared) {
+		
+		double driverThrottle = MathExtra.clamp(MathExtra.applyDeadband(throttle, 0.15), -1, 1);
+		double driverWheel = MathExtra.clamp(MathExtra.applyDeadband(wheel, 0.15), -1, 1);
+		
+		if (squared) {
+			driverThrottle = ( Math.pow(driverThrottle, 2) * (driverThrottle<0?-1:1));
+			driverWheel = ( Math.pow(driverWheel, 2) * (driverWheel<0?-1:1));
+		}
 		
 		double rightMotorOutput = 0;
 		double leftMotorOutput = 0;
@@ -143,8 +160,10 @@ public class DriveTrain extends Subsystem {
 			leftMotorOutput = driverThrottle + Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
 		}
 		
+		/*
 		rightMotorOutput = MathExtra.clamp(rightMotorOutput, -1, 1);
 		leftMotorOutput = MathExtra.clamp(leftMotorOutput, -1, 1);
+		*/
 		
 		/*
 		rightMaster.set(ControlMode.Velocity, rightMotorOutput * maxVelocity);
@@ -180,6 +199,7 @@ public class DriveTrain extends Subsystem {
 	}
 	
 	public void zeroGyro() {
+		drivePigeon.setYaw(0, 10);
 		drivePigeon.setFusedHeading(0.0, 10);
 	}
 	
@@ -209,7 +229,11 @@ public class DriveTrain extends Subsystem {
 	
 	@Override
 	protected void initDefaultCommand() {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void Periodic() {
+		SmartDashboard.putNumber("DriveTrainGyro", getGyroHeader());
 	}
 	
 }

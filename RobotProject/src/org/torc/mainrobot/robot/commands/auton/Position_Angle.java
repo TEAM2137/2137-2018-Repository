@@ -1,7 +1,6 @@
 package org.torc.mainrobot.robot.commands.auton;
 
 import org.torc.mainrobot.robot.subsystems.DriveTrain;
-import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 import org.torc.mainrobot.tools.CLCommand;
 import org.torc.mainrobot.tools.MathExtra;
 

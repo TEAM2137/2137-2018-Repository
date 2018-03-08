@@ -8,6 +8,7 @@ public class ClimbRamp extends Subsystem {
 	private Servo rServo;
 	
 	private final double homePos = 0;
+	private final double openPos = 1;
 	
 	private boolean isOpen = false;
 	
@@ -16,7 +17,7 @@ public class ClimbRamp extends Subsystem {
 	}
 	
 	public void openRamp() {
-		rServo.set(1);
+		rServo.set(openPos);
 		isOpen = true;
 	}
 	

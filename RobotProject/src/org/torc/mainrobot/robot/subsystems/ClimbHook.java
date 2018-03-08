@@ -8,6 +8,7 @@ public class ClimbHook extends Subsystem {
 	private Servo cServo;
 	
 	private final double homePos = 0;
+	private final double openPos = 1;
 	
 	private boolean isOpen = false;
 	
@@ -16,7 +17,7 @@ public class ClimbHook extends Subsystem {
 	}
 	
 	public void openHook() {
-		cServo.set(1);
+		cServo.set(openPos);
 		isOpen = true;
 	}
 	

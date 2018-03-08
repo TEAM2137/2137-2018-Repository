@@ -22,6 +22,10 @@ public class TeleopMode {
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.left);
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.right);
 		
+		// Home hook and ramp
+		RobotMap.ClimbingHook.closeHook();
+		RobotMap.ClimbingRamp.closeRamp();
+		
 	}
 	
 	public static void Periodic() {

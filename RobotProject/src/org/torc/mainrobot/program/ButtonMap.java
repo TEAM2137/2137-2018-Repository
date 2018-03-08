@@ -18,7 +18,8 @@ public class ButtonMap {
 	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, 
 							elevHigh, toggleShifters, elevStartPickup,
 							grabberSpitSlow, grabberSpitFast, autonSelectRight, 
-							autonSelectLeft, autonPriorityUp, autonPriorityDown }
+							autonSelectLeft, autonPriorityUp, autonPriorityDown,
+							hookRelease, rampRelease}
 	
 	public enum RCAxis { leftX, leftY, rightX, rightY,
 						grabberJog }
@@ -49,7 +50,7 @@ public class ButtonMap {
 				toReturn = getEasyButtonInternal(4, getType);
 				break;
 			case toggleShifters:
-				toReturn = getEasyButtonInternal(3, getType);
+				toReturn = getEasyButtonInternal(5, getType);
 				break;
 			case elevStartPickup:
 				toReturn = getEasyButtonInternal(3, getType);
@@ -71,6 +72,12 @@ public class ButtonMap {
 				break;
 			case autonPriorityDown:
 				toReturn = getPOVInternal(180, getType);
+				break;
+			case hookRelease:
+				toReturn = getEasyButtonInternal(6, getType);
+				break;
+			case rampRelease:
+				toReturn = (mController.getRawAxis(3) >= 0.8);
 				break;
 		}
 		

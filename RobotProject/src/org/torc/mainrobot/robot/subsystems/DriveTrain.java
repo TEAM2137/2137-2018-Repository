@@ -224,7 +224,7 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		case right:
 			rightMaster.setSelectedSensorPosition(0, 0, 10);
 			break;
-	}
+		}
 	}
 	
 	@Override
@@ -234,6 +234,11 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	@Override
 	public void Periodic() {
 		SmartDashboard.putNumber("DriveTrainGyro", getGyroHeader());
+		
+		double[] driveMotors = {leftMaster.getMotorOutputPercent(), rightMaster.getMotorOutputPercent(), 
+								leftSlave.getMotorOutputPercent(), rightSlave.getMotorOutputPercent()};
+		
+		SmartDashboard.putNumberArray("RobotDrive Motors", driveMotors);
 	}
 	
 }

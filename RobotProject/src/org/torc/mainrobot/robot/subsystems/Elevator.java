@@ -1,5 +1,6 @@
 package org.torc.mainrobot.robot.subsystems;
 
+import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.InheritedPeriodic;
 import org.torc.mainrobot.robot.commands.Elevator_Home;
 import org.torc.mainrobot.tools.MathExtra;
@@ -24,9 +25,9 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private TalonSRX elevator;
 	
-	public final static int maxSoftLimit = 25297;//28345;
+	public final static int maxSoftLimit = RobotMap.RobInfo.isPracticeBot()?28345:25297;
 	
-	public final static int posPerInch = 502; //523;
+	public final static int posPerInch = RobotMap.RobInfo.isPracticeBot()?502:405; //TODO: Adjust this. The 402 is for an estimation
 	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;

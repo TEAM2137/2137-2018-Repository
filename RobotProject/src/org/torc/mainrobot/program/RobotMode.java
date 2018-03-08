@@ -23,6 +23,9 @@ public class RobotMode {
 	 */
 	public static void Init() {
 		
+		// Keep this at top of other constructor calls
+		RobotMap.RobInfo = new RobotInfo(9);
+		
 		// Init camera server for getting webcams from dashboard
 		CameraServer.getInstance().startAutomaticCapture();
 		

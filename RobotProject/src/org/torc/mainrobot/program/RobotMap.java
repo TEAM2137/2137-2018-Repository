@@ -58,4 +58,6 @@ public class RobotMap {
 	
 	public static ClimbHook ClimbingHook;
 	
+	public static RobotInfo RobInfo;
+	
 }

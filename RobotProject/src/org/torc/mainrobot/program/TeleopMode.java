@@ -26,6 +26,8 @@ public class TeleopMode {
 		RobotMap.ClimbingHook.closeHook();
 		RobotMap.ClimbingRamp.closeRamp();
 		
+		System.out.println("Is Practice Bot: " + RobotMap.RobInfo.isPracticeBot());
+		
 	}
 	
 	public static void Periodic() {

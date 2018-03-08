@@ -37,11 +37,13 @@ public class AutonDatabase {
 		GameData[1] = gData.charAt(1);
 		GameData[2] = gData.charAt(2);
 		
-		//autonGetStart();
+		autonGetStart();
 		
+		/*
 		ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 100, 0.5, 0, true, false));
 		ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.5, -90, true, true));
 		ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 50, 0.5, 0, true, true));
+		*/
 	}
 	
 	

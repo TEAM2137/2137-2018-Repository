@@ -25,7 +25,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private TalonSRX elevator;
 	
-	public final static int maxSoftLimit = RobotMap.RobInfo.isPracticeBot()?28345:25297;
+	public final static int maxSoftLimit = RobotMap.RobInfo.isPracticeBot()?28345:26726;//25297;
 	
 	public final static int posPerInch = RobotMap.RobInfo.isPracticeBot()?502:405; //TODO: Adjust this. The 402 is for an estimation
 	
@@ -61,7 +61,8 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 				toReturn = 0;
 				break;
 			case middle:
-				toReturn = 17769;
+				toReturn = RobotMap.RobInfo.isPracticeBot()?17769:20650;
+				
 				break;
 			case high:
 				toReturn = 26840;

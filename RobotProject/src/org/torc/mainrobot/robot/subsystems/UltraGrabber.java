@@ -36,8 +36,12 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 	public final static double angleMult = 4521;
 	
-	private final static double ticksMin = -28 * angleMult;
+										 //-20
+	private final static double ticksMin = -7 * angleMult;
 	private final static double ticksMax = 70 * angleMult;
+	
+	private final static double ticksHomePacked = -20 * angleMult;
+	private boolean packedHome = false;
 	
 	private double targetAngle = 0;
 
@@ -69,7 +73,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		int toReturn = 0;
 		switch(position) {
 			case up:
-				toReturn = -20;//-28;
+				toReturn = -7;//-28;
 				break;
 			case pickup:
 				toReturn = 70; //75
@@ -152,6 +156,15 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		grabberHomer.start();
 	}
 	
+	public void homeGrabberPacked() {
+		if (hasBeenHomed) {
+			deHome();
+		}
+		grabberHomer = new UltraGrabber_Homing(this);
+		grabberHomer.start();
+		packedHome = true;
+	}
+	
 	private void hasNotHomedAlert() {
 		System.out.println("Cannot move Grabber; has not homed!!");
 	}
@@ -198,7 +211,14 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 			System.out.println("Grabber Homed!!");
 			grabberHomer = null;
 			hasBeenHomed = true;
-			findGrabberPosition(GrabberPositions.up);
+			
+			if (!packedHome) {
+				findGrabberPosition(GrabberPositions.up);
+			}
+			else {
+				angleMotor.set(ControlMode.Position, ticksHomePacked);
+				packedHome = false;
+			}
 		}
 	}
 }
@@ -216,7 +236,7 @@ class UltraGrabber_Homing implements InheritedPeriodic {
 	private boolean isFinished = false;
 	
 	double firstMoveDownPerc = 0.5;
-	double secondMoveUpPerc = 0.1;
+	double secondMoveUpPerc = 0.3;
 	
 	public UltraGrabber_Homing(UltraGrabber grabber) {
 		Robot.AddToPeriodic(this);

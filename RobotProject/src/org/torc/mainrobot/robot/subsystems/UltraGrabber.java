@@ -38,9 +38,10 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 										 //-20
 	private final static double ticksMin = -7 * angleMult;
-	private final static double ticksMax = 70 * angleMult;
-	
-	private final static double ticksHomePacked = -20 * angleMult;
+										 //60
+	private final static double ticksMax = 68 * angleMult;
+												//-20
+	private final static double ticksHomePacked = -28 * angleMult;
 	private boolean packedHome = false;
 	
 	private double targetAngle = 0;
@@ -76,7 +77,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = -7;//-28;
 				break;
 			case pickup:
-				toReturn = 70; //75
+				toReturn = 68; //60
 				break;
 			case flat:
 				toReturn = 60;
@@ -98,7 +99,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = 0;
 				break;
 			case cubeKeep:
-				toReturn = -0.15;
+				toReturn = -0.25;
 				break;
 			case pickup:
 				toReturn = -1; //-0.85

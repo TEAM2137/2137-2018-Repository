@@ -5,6 +5,7 @@ import org.torc.mainrobot.program.ButtonMap.GetType;
 import org.torc.mainrobot.program.ButtonMap.RCAxis;
 import org.torc.mainrobot.program.ButtonMap.RCButtons;
 import org.torc.mainrobot.robot.ControlledStateMachine;
+import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 
 public class DriveTrain_Teleop extends ControlledStateMachine {
 	
@@ -25,6 +26,11 @@ public class DriveTrain_Teleop extends ControlledStateMachine {
 		// Open hook
 		if (RobotMap.driverControl.getButton(RCButtons.hookRelease, GetType.pressed)) {
 			RobotMap.ClimbingHook.openHook();
+		}
+		
+		// Go to climb position
+		if (RobotMap.driverControl.getButton(RCButtons.elevClimb, GetType.pressed)) {
+			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.climb);
 		}
 		
 		// Open ramp

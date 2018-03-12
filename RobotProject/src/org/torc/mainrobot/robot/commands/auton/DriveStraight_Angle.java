@@ -1,5 +1,6 @@
 package org.torc.mainrobot.robot.commands.auton;
 
+import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.subsystems.DriveTrain;
 import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 import org.torc.mainrobot.tools.CLCommand;
@@ -23,9 +24,9 @@ public class DriveStraight_Angle extends CLCommand {
 	private double errSum = 0;
 	private double dLastPos = 0;
 	
-	private final double pGain = 0.045;//0.045;
+	private final double pGain = 0.022;//0.045;
 	private final double iGain = 0;
-	private final double dGain = 0.68;//0.1;
+	private final double dGain = 0;//0.68;
 	
 	private double angleTarget = 0;
 	
@@ -43,7 +44,7 @@ public class DriveStraight_Angle extends CLCommand {
 		relative = isRelative;
 		speedRamp = rampSpeed;
 		
-		targetTicks = (int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
+		targetTicks = (int) (RobotMap.DriveSubsystem.TicksPerInch * inches); //(int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
 		
 		slowDownPoint = (targetTicks / 4) * 3;
 	}
@@ -107,19 +108,23 @@ public class DriveStraight_Angle extends CLCommand {
 			finishedCommand = true;
 		}
 		
-		driveSubsystem.setVelocity(leftSpeed, rightSpeed);
+		//driveSubsystem.setVelocity(leftSpeed, rightSpeed);
+		driveSubsystem.setPercVBus(leftSpeed, rightSpeed);
 	}
 
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
 		System.out.println("Finished driving!");
+		/*
 		if (speedRamp) {
 			driveSubsystem.setVelocity(0, 0);
 		}
 		else {
 			driveSubsystem.setPercVBus(0, 0);
 		}
+		*/
+		driveSubsystem.setPercVBus(0, 0);
 	}
 
 	// Called when another command which requires one or more of the same

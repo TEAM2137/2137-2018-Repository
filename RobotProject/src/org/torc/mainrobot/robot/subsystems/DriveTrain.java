@@ -5,6 +5,7 @@ import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
+import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -20,6 +21,8 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	 * for the driveline to do a full rotation.
 	 */
 	public final int TicksPerRev = 3600;
+	
+	public final int TicksPerInch = 189;
 	
 	public final double WheelDiameterIn = 6;
 	
@@ -64,11 +67,6 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
 		
-		rightMaster.configOpenloopRamp(voltageRampRateHigh, 10);
-		rightSlave.configOpenloopRamp(voltageRampRateHigh, 10);
-		leftMaster.configOpenloopRamp(voltageRampRateHigh, 10);
-		leftSlave.configOpenloopRamp(voltageRampRateHigh, 10);
-		
 		// Flip left sensor
 		leftMaster.setSensorPhase(true);
 		
@@ -86,7 +84,7 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		rightShifter = new Solenoid(0);
 		leftShifter = new Solenoid(1);
 		
-		setShifters(false);
+		setShifters(true); //false
 	}
 	
 	public boolean getShifters() {
@@ -95,11 +93,12 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	
 	public void setShifters(boolean shift) {
 		shifterState = shift;
+		
 		rightShifter.set(shift);
 		leftShifter.set(shift);
 		
 		// Remember: shifterState as true means low gear
-		double kFVal = shifterState?0.82:0.21;
+		double kFVal = shifterState?0.738:0.189;//0.82:0.21;
 		rightMaster.config_kF(0, kFVal, 10);
 		leftMaster.config_kF(0, kFVal, 10);
 		
@@ -107,16 +106,20 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		rightMaster.config_kP(0, kPVal, 10);
 		leftMaster.config_kP(0, kPVal, 10);
 		
-		double kRampVal = shifterState?(voltageRampRateHigh*3):voltageRampRateHigh;
+		double kRampVal = shifterState?(voltageRampRateHigh * 3):voltageRampRateHigh;
 		rightMaster.configOpenloopRamp(kRampVal, 10);
 		rightSlave.configOpenloopRamp(kRampVal, 10);
 		leftMaster.configOpenloopRamp(kRampVal, 10);
 		leftSlave.configOpenloopRamp(kRampVal, 10);
 		
-		System.out.println("ShifterVal: " + shift);
+		System.out.println("ShifterVal: " + shift + ". kFVal: " + kFVal);
 	}
 	
 	public void setVelocity(double leftSide, double rightSide) {
+		
+		SmartDashboard.putNumber("LeftVelInput", leftSide);
+		SmartDashboard.putNumber("RightVelInput", rightSide);
+		
 		leftSide = MathExtra.clamp(leftSide, -1, 1) * (shifterState?VelFullLow:VelFullHigh);
 		leftMaster.set(ControlMode.Velocity, leftSide);
 		if (leftSlave.getControlMode() != ControlMode.Follower) {
@@ -131,6 +134,10 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void setPercVBus(double leftSide, double rightSide) {
+		
+		SmartDashboard.putNumber("LeftVelInput", leftSide);
+		SmartDashboard.putNumber("RightVelInput", rightSide);
+		
 		leftMaster.set(ControlMode.PercentOutput, leftSide);
 		leftSlave.set(ControlMode.PercentOutput, leftSide);
 		
@@ -160,24 +167,22 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 			leftMotorOutput = driverThrottle + Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
 		}
 		
-		/*
-		rightMotorOutput = MathExtra.clamp(rightMotorOutput, -1, 1);
-		leftMotorOutput = MathExtra.clamp(leftMotorOutput, -1, 1);
-		*/
-		
-		/*
-		rightMaster.set(ControlMode.Velocity, rightMotorOutput * maxVelocity);
-		leftMaster.set(ControlMode.Velocity, leftMotorOutput * maxVelocity);
-		*/
-		//setPercVBus(leftMotorOutput, rightMotorOutput);
-		setVelocity(leftMotorOutput, rightMotorOutput);
+		// If low gear, drive percVBus
+		if (getShifters()) {
+			setPercVBus(leftMotorOutput, rightMotorOutput);
+		}
+		// High gear: drive velocity
+		else {
+			setVelocity(leftMotorOutput, rightMotorOutput);
+		}
 		
 		// Read encoders
 		SmartDashboard.putNumber("leftEncoder", leftMaster.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("RightEVel", rightMaster.getSelectedSensorVelocity(0));
 		
-		SmartDashboard.putNumber("currSpeed", rightMaster.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("rightSpeed", rightMaster.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("leftSpeed", leftMaster.getSelectedSensorVelocity(0));
 		
 	}
 	
@@ -239,6 +244,8 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 								leftSlave.getMotorOutputPercent(), rightSlave.getMotorOutputPercent()};
 		
 		SmartDashboard.putNumberArray("RobotDrive Motors", driveMotors);
+		
+		SmartDashboard.putNumber("RightEnc", getEncoder(DTSide.right));
 	}
 	
 }

@@ -44,7 +44,7 @@ public class RobotMode {
 		
 		RobotMap.ClimbingHook = new ClimbHook(2);
 		
-		RobotMap.ClimbingRamp = new ClimbRamp(3);
+		RobotMap.ClimbingRamp = new ClimbRamp(4);
 	}
 	
 	/**

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutonMode {
 	
-	public static DigitalInput testInp = new DigitalInput(9);
+	//public static DigitalInput testInp = new DigitalInput(9);
 	
 	public static void Init() {
 		//RobotMap.DriveSubsystem.zeroGyro();
@@ -43,7 +43,7 @@ public class AutonMode {
 	
 	public static void Periodic() {
 		
-		SmartDashboard.putBoolean("InputEye", testInp.get());
+		//SmartDashboard.putBoolean("InputEye", testInp.get());
 		
 		SmartDashboard.putNumber("RightEnc", RobotMap.DriveSubsystem.getEncoder(DTSide.right));
 		SmartDashboard.putNumber("LeftEnc", RobotMap.DriveSubsystem.getEncoder(DTSide.left));

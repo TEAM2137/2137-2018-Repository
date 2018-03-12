@@ -7,8 +7,8 @@ public class ClimbRamp extends Subsystem {
 
 	private Servo rServo;
 	
-	private final double homePos = 0;
-	private final double openPos = 1;
+	private final double homePos = 1;
+	private final double openPos = 0;
 	
 	private boolean isOpen = false;
 	

@@ -16,7 +16,7 @@ public class ButtonMap {
 	GenericHID mController;
 	
 	public enum RCButtons { elevatorUp, elevatorDown, elevLow, elevMid, 
-							elevHigh, toggleShifters, elevStartPickup,
+							elevClimb, elevHigh, toggleShifters, elevStartPickup,
 							grabberSpitSlow, grabberSpitFast, autonSelectRight, 
 							autonSelectLeft, autonPriorityUp, autonPriorityDown,
 							hookRelease, rampRelease}
@@ -47,6 +47,9 @@ public class ButtonMap {
 				toReturn = getEasyButtonInternal(2, getType);
 				break;
 			case elevHigh:
+				toReturn = getEasyButtonInternal(4, getType);
+				break;
+			case elevClimb:
 				toReturn = getEasyButtonInternal(4, getType);
 				break;
 			case toggleShifters:

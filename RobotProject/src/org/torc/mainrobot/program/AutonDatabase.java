@@ -38,6 +38,22 @@ public class AutonDatabase {
 		GameData[1] = gData.charAt(1);
 		GameData[2] = gData.charAt(2);
 		
+		/*
+		ComList.addSequential(new TestAutonCommand("Waitingcom..."));
+		Elevator_Position eleJog = new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.middle);
+		ComList.addParallel(eleJog);
+		ComList.addSequential(new Command_PauseUntil(eleJog));
+		ComList.addSequential(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.pickup));
+		*/
+		
+		//Low gear
+		
+		RobotMap.DriveSubsystem.setShifters(true);
+		
+		//ComList.addSequential(new TestAutonCommand("waiting"));
+		
+		//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 12, 0.25, 0, true, true));
+		
 		autonGetStart();
 		
 		/*
@@ -66,24 +82,39 @@ public class AutonDatabase {
 				// Right Plate
 				// Drive a little less than 100in straight
 				if (GameData[0] == 'R') {
-					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 50, 0.25, 0, true, false));
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 50, 0.55, 0, true, false));
 					ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
 					ComList.addParallel(new Elevator_Jog(RobotMap.ElevSubsystem, Elevator.posPerInch * 2));
-					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 42, 0.25, 0, true, true));
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 42, 0.55, 0, true, true));
 					ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 				}
 				// Left Plate
 				// Zig-Zag to the plate across and deposit
 				else {
-					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 7, 0.25, 0, true, false));
-					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 122, 0.25, -62, true, false));
+					
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 7, 0.55, 0, true, false));
+					ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.55, -62, true, true));
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 102, 0.55, 0, true, false));
+					ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.55, 62, true, true));
+					
 					ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
 					ComList.addParallel(new Elevator_Jog(RobotMap.ElevSubsystem, Elevator.posPerInch * 3));
+																						// 36
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 12, 0.55, 0, true, true));
+					ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 					
-					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 42, 0.25, 62, true, true));
+					/*
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 7, 0.25, 0, true, false));
+																									//-62
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 122, 0.35, -70, true, false));
+					ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
+					ComList.addParallel(new Elevator_Jog(RobotMap.ElevSubsystem, Elevator.posPerInch * 3));
+																						// 42
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 48, 0.25, 70, true, true));
 					//ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 20, 30, true));
 					
 					ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
+					*/
 				}
 				break;
 			// Start B
@@ -116,47 +147,71 @@ public class AutonDatabase {
 		
 		// switch goto
 		if ((GameData[0] == lookingFor && GameData[1] != lookingFor) || (samePlate && AutonPri == AutonPriority.sw1tch)) {
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 137, 0.25, 0, true, false));
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 12, 0.25, isRight?-90:90, true, true));
-			// TODO: Add cube dropoff
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 145, 0.65, 0, true, false));
+			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.65, isRight?-90:90, true, true));
+			
+			ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
+			ComList.addParallel(new Elevator_Jog(RobotMap.ElevSubsystem, Elevator.posPerInch * 3));
+			
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 17, 0.55, 0, true, true));
+			ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 		}
 		// scale goto
 		else if ((GameData[0] != lookingFor && GameData[1] == lookingFor) || (samePlate && AutonPri == AutonPriority.scale)) {
+			
+			addCrossLine();
+			
+			/*
+			
 			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 260, 0.25, 0, true, true));
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 222, 0.50, 0, true, true));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 216, 0.75, 0, true, true));
 			
 			//ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.up));
 			
 			Elevator_Position highPos = new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.high);
 			ComList.addParallel(highPos);
 			
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 33.94, 0.25, isRight?-45:45, true, true));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 41.94, 0.55, isRight?-45:45, true, true));
 			ComList.addSequential(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
 			
 			ComList.addSequential(new Command_PauseUntil(highPos));
 			
 			ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
+			
+			ComList.addSequential(new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.floor));
+			
+			*/
 		}
 		// 90-across code
 		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
+			
+			addCrossLine();
+			
+			/*
+
 			// 90-across auton
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 196, 0.25, 0, true, false));
-			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.25, isRight?-90:90, true, true));
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 186, 0.25, 0, true, false));
-			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.25, isRight?90:-90, true, true));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 196, 0.75, 0, true, false));
+			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.75, isRight?-90:90, true, true));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 186, 0.65, 0, true, false));
+			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.65, isRight?90:-90, true, true));
 			
 			Elevator_Position elevHigh = new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.high);
 			ComList.addParallel(elevHigh);
 			
 			ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 43, 0.25, 0, true, true));
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 43, 0.45, 0, true, true));
 			ComList.addSequential(new Command_PauseUntil(elevHigh));
 			ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.shoot));
 			
 			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 46, 0.25, isRight?90:-90, true, true));
-			// TODO: Add cube dropoff
+			
+			*/
 		}
 		
 		
+	}
+	
+	private static void addCrossLine() {
+		ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 92, 0.55, 0, true, true));
 	}
 }

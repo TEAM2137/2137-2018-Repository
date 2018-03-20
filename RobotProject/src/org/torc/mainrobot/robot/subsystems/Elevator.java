@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class Elevator extends Subsystem implements InheritedPeriodic {
 	// Put methods for controlling this subsystem
@@ -27,7 +28,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	public final static int maxSoftLimit = RobotMap.RobInfo.isPracticeBot()?28345:26726;//25297;
 	
-	public final static int posPerInch = RobotMap.RobInfo.isPracticeBot()?502:448;
+	public final static int posPerInch = RobotMap.RobInfo.isPracticeBot()?651:448;
 	
 	private boolean maxLimitTripped = false;
 	private boolean minLimitTripped = false;
@@ -44,19 +45,25 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		
 		elevator = new TalonSRX(talonPort);
 		// Invert motor phase
-		//elevator.setInverted(true);
-		MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0, 5, 0.01, 0);
-		elevator.config_IntegralZone(0, 30, 10);
+		//elevator.setInverted(false);
+		//elevator.setSensorPhase(true);
+		
+		//MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0, 5, 0.01, 0);
+		MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0.58, 3, 0.01, 60);
+		elevator.config_IntegralZone(0, 158, 10);
 		
 		endstop = new DigitalInput(endstopPort);
 		
         elevator.configPeakOutputForward(1, 10);
         elevator.configPeakOutputReverse(-1, 10);
+        
+        elevator.configMotionCruiseVelocity(10000, 10);
+        elevator.configMotionAcceleration(2500, 10);
 	}
 	
 	public static int GetElevatorPositions(ElevatorPositions position) {
 		int toReturn = 0;
-		switch(position) {
+		switch (position) {
 			case floor:
 				toReturn = 0;
 				break;
@@ -113,7 +120,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		int targPos = GetElevatorPositions(position);
 		targetPosition = targPos;
 		elevatorPosition = position;
-		elevator.set(ControlMode.Position, MathExtra.clamp(targPos, 0, maxSoftLimit));
+		elevator.set(ControlMode.MotionMagic, MathExtra.clamp(targPos, 0, maxSoftLimit));
 	}
 	
 	public void zeroEncoder() {
@@ -133,6 +140,12 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		return endstop.get();
 	}
 	
+	/*
+	public void setPosMagic(int pos) {
+		elevator.set(ControlMode.MotionMagic, pos);
+	}
+	*/
+	
 	public void jogElevatorPos(double positionInc) {
 		if (!hasBeenHomed) {
 			hasNotHomedAlert();
@@ -140,7 +153,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		}
 		targetPosition += positionInc;
 		targetPosition = MathExtra.clamp(targetPosition, 0, maxSoftLimit);
-		elevator.set(ControlMode.Position, targetPosition);
+		elevator.set(ControlMode.MotionMagic, targetPosition);
 	}
 	
 	public void jogElevatorPosInc(int increment) {
@@ -173,7 +186,12 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		printEncoder();
 		
 		SmartDashboard.putNumber("ElevatorError", elevator.getSelectedSensorPosition(0) - targetPosition);
+		//SmartDashboard.putNumber("ElevatorEncoder", elevator.getSelectedSensorPosition(0));
+		//System.out.println("ElevatorEncoder " + elevator.getSelectedSensorPosition(0));
 		SmartDashboard.putBoolean("ElevatorEndstop", endstop.get());
+		
+		SmartDashboard.putNumber("ElevatorVel", elevator.getSelectedSensorVelocity(0));
+		//System.out.println("ElevatorVel " + elevator.getSelectedSensorVelocity(0));
 	}
 	
 }

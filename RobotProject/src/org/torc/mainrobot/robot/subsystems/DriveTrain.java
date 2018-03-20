@@ -5,7 +5,6 @@ import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
-import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -50,6 +49,9 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	
 	// True is low gear
 	private boolean shifterState = false;
+	
+	// If driving in auton
+	private boolean autonDrive = false;
 	
 	public enum DTSide {left, right}
 	
@@ -98,19 +100,26 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		leftShifter.set(shift);
 		
 		// Remember: shifterState as true means low gear
-		double kFVal = shifterState?0.738:0.189;//0.82:0.21;
+		double kFVal = shifterState?0.82:0.21;
+		rightMaster.config_kF(0, kFVal, 10);
+		leftMaster.config_kF(0, kFVal, 10);
+		
+		double kPVal = shifterState?0.83:0.1604;//0.83:0.0802;
+		rightMaster.config_kP(0, kPVal, 10);
+		leftMaster.config_kP(0, kPVal, 10);
+		
+		/*
+		// Old values
+		double kFVal = shifterState?0.82:0.21;
 		rightMaster.config_kF(0, kFVal, 10);
 		leftMaster.config_kF(0, kFVal, 10);
 		
 		double kPVal = shifterState?0.83:0.0802;
 		rightMaster.config_kP(0, kPVal, 10);
 		leftMaster.config_kP(0, kPVal, 10);
+		*/
 		
-		double kRampVal = shifterState?(voltageRampRateHigh * 3):voltageRampRateHigh;
-		rightMaster.configOpenloopRamp(kRampVal, 10);
-		rightSlave.configOpenloopRamp(kRampVal, 10);
-		leftMaster.configOpenloopRamp(kRampVal, 10);
-		leftSlave.configOpenloopRamp(kRampVal, 10);
+		configVRamp();
 		
 		System.out.println("ShifterVal: " + shift + ". kFVal: " + kFVal);
 	}
@@ -134,10 +143,6 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void setPercVBus(double leftSide, double rightSide) {
-		
-		SmartDashboard.putNumber("LeftVelInput", leftSide);
-		SmartDashboard.putNumber("RightVelInput", rightSide);
-		
 		leftMaster.set(ControlMode.PercentOutput, leftSide);
 		leftSlave.set(ControlMode.PercentOutput, leftSide);
 		
@@ -151,8 +156,8 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		double driverWheel = MathExtra.clamp(MathExtra.applyDeadband(wheel, 0.15), -1, 1);
 		
 		if (squared) {
-			driverThrottle = ( Math.pow(driverThrottle, 2) * (driverThrottle<0?-1:1));
-			driverWheel = ( Math.pow(driverWheel, 2) * (driverWheel<0?-1:1));
+			driverThrottle = (Math.pow(driverThrottle, 2) * (driverThrottle<0?-1:1));
+			driverWheel = (Math.pow(driverWheel, 2) * (driverWheel<0?-1:1));
 		}
 		
 		double rightMotorOutput = 0;
@@ -176,31 +181,27 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 			setVelocity(leftMotorOutput, rightMotorOutput);
 		}
 		
-		// Read encoders
-		SmartDashboard.putNumber("leftEncoder", leftMaster.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("RightEVel", rightMaster.getSelectedSensorVelocity(0));
-		
-		SmartDashboard.putNumber("rightSpeed", rightMaster.getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("leftSpeed", leftMaster.getSelectedSensorVelocity(0));
-		
+	}
+	
+	private void configVRamp() {
+		if (autonDrive) {
+			rightMaster.configOpenloopRamp(0, 10);
+			rightSlave.configOpenloopRamp(0, 10);
+			leftMaster.configOpenloopRamp(0, 10);
+			leftSlave.configOpenloopRamp(0, 10);
+		}
+		else {
+			double kRampVal = shifterState?(voltageRampRateHigh * 3):voltageRampRateHigh;
+			rightMaster.configOpenloopRamp(kRampVal, 10);
+			rightSlave.configOpenloopRamp(kRampVal, 10);
+			leftMaster.configOpenloopRamp(kRampVal, 10);
+			leftSlave.configOpenloopRamp(kRampVal, 10);
+		}
 	}
 	
 	public double getGyroHeader() {
-		// Negative to keep the "Negative angle turns left" code.
-		double header = -drivePigeon.getFusedHeading(fusionStatus);
-		
-		/*
-		// All of this division/checking code is to keep the angle wrapped around in -360 - 360deg increments
-		double div = header / 360;
-		if (div > 1) {
-			header -= (360 * Math.floor(div));
-		}
-		else if (div < -1) {
-			header += (360 * Math.floor(Math.abs(div)));
-		}
-		*/
-		return header;
+		// Negative to keep the "Negative angle turns left" code.		
+		return -drivePigeon.getFusedHeading(fusionStatus);
 	}
 	
 	public void zeroGyro() {
@@ -223,19 +224,20 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	
 	public void zeroEncoder(DTSide side) {
 		switch (side) {
-		case left:
-			leftMaster.setSelectedSensorPosition(0, 0, 10);
-			break;
-		case right:
-			rightMaster.setSelectedSensorPosition(0, 0, 10);
-			break;
+			case left:
+				leftMaster.setSelectedSensorPosition(0, 0, 10);
+				break;
+			case right:
+				rightMaster.setSelectedSensorPosition(0, 0, 10);
+				break;
 		}
 	}
 	
-	@Override
-	protected void initDefaultCommand() {
+	public void setAutonDriving(boolean val) {
+		autonDrive = val;
+		configVRamp();
 	}
-
+	
 	@Override
 	public void Periodic() {
 		SmartDashboard.putNumber("DriveTrainGyro", getGyroHeader());
@@ -245,7 +247,16 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		
 		SmartDashboard.putNumberArray("RobotDrive Motors", driveMotors);
 		
-		SmartDashboard.putNumber("RightEnc", getEncoder(DTSide.right));
+		// Read encoders
+		SmartDashboard.putNumber("leftEncoder", leftMaster.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("rightEncoder", rightMaster.getSelectedSensorPosition(0));
+		
+		SmartDashboard.putNumber("rightSpeed", rightMaster.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("leftSpeed", leftMaster.getSelectedSensorVelocity(0));
 	}
 	
+	@Override
+	protected void initDefaultCommand() {
+	}
+
 }

@@ -1,5 +1,6 @@
 package org.torc.mainrobot.robot.subsystems;
 
+import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.InheritedPeriodic;
 import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.tools.MathExtra;
@@ -9,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +30,8 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 	private  UltraGrabber_Homing grabberHomer;
 	
+	private Solenoid cubeKeep;
+	
 	private boolean hasBeenHomed = false;
 	// TODO: change temportary positions to final
 	public enum GrabberPositions { up, flat, pickup, shooting }
@@ -46,7 +50,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 	private double targetAngle = 0;
 
-	public UltraGrabber(int leftVictorPort, int rightVictorPort, int angleTalonPort, int endstopPort, int cubePhotoeyePort) {
+	public UltraGrabber(int leftVictorPort, int rightVictorPort, int angleTalonPort, int endstopPort, int cubePhotoeyePort, int solenoidPort) {
 		// Add to periodic list
 		org.torc.mainrobot.robot.Robot.AddToPeriodic(this);
 		
@@ -64,6 +68,8 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		endstop = new DigitalInput(endstopPort);
 		
 		cubeEye = new DigitalInput(cubePhotoeyePort);
+		
+		cubeKeep = new Solenoid(solenoidPort);
 	}
 	
 	/**
@@ -124,6 +130,19 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		targetAngle = targ / angleMult;
 		targetAngle = MathExtra.clamp((targetAngle * angleMult), ticksMin, ticksMax) / angleMult;
 		angleMotor.set(ControlMode.Position, MathExtra.clamp(targ, ticksMin, ticksMax));
+	}
+	
+	public void setSolenoid(boolean val) {
+		cubeKeep.set(val);
+	}
+	
+	public boolean getSolenoid() {
+		return cubeKeep.get();
+	}
+	
+	public void setCubeGrip(boolean val) {
+		cubeKeep.set(val);
+		setGrabberIntakeSpeed(val?GrabberSpeeds.cubeKeep:GrabberSpeeds.none);
 	}
 	
 	public void setGrabberIntakeSpeed (GrabberSpeeds speed) {
@@ -189,9 +208,17 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public boolean getCubeEye() {
+		
+		boolean retVal;
 		// Practice bot: 
-		// return !cubeEye.get();
-		return cubeEye.get();
+		if (RobotMap.RobInfo.isPracticeBot()) {
+			retVal = !cubeEye.get();
+		}
+		else {
+			retVal = cubeEye.get();
+		}
+		
+		return retVal;
 	}
 	
 	public int getEncoder() {
@@ -279,6 +306,11 @@ class UltraGrabber_Homing implements InheritedPeriodic {
 		if (isFinished) {
 			started = false;
 		}
+		
+		SmartDashboard.putBoolean("GrabberEndstop", RobotMap.GrabberSubsystem.getEndstop());
+		SmartDashboard.putBoolean("GrabberCubeEye", RobotMap.GrabberSubsystem.getCubeEye());
+		SmartDashboard.putNumber("GrabberEncoder", RobotMap.GrabberSubsystem.getEncoder());
+		
 	}
 	
 }

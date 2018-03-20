@@ -4,6 +4,7 @@ import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.program.ButtonMap.RCAxis;
 import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
+import org.torc.mainrobot.robot.subsystems.UltraGrabber;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
 
@@ -22,10 +23,16 @@ public class UltraGrabber_Pickup extends Command {
 	
 	private final int endStopWait = 800 / 20;
 	
-	public UltraGrabber_Pickup() {
-		// Use requires() here to declare subsystem dependencies
-		requires(RobotMap.GrabberSubsystem);
-		requires(RobotMap.ElevSubsystem);
+	private UltraGrabber GrabberSubsystem;
+	private Elevator ElevSubsystem;
+	
+	public UltraGrabber_Pickup(UltraGrabber grabber, Elevator elev) {
+		
+		GrabberSubsystem = grabber;
+		ElevSubsystem = elev;
+		
+		requires(GrabberSubsystem);
+		requires(ElevSubsystem);
 	}
 
 	// Called just before this Command runs the first time
@@ -38,13 +45,14 @@ public class UltraGrabber_Pickup extends Command {
 	protected void execute() {
 		switch (state) {
 			case lowering:
-				RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.pickup);
-				RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.pickup);
-				RobotMap.ElevSubsystem.positionFind(ElevatorPositions.floor);
+				GrabberSubsystem.findGrabberPosition(GrabberPositions.pickup);
+				GrabberSubsystem.setCubeGrip(false);
+				GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.pickup);
+				ElevSubsystem.positionFind(ElevatorPositions.floor);
 				state = PickupStates.waitingForCube;
 				break;
 			case waitingForCube:
-				if (RobotMap.GrabberSubsystem.getCubeEye()) {
+				if (GrabberSubsystem.getCubeEye()) {
 					endStopCount++;
 				}
 				else {
@@ -65,16 +73,21 @@ public class UltraGrabber_Pickup extends Command {
 				 * don't auto position the grabber up
 				 */
 				if (!(jogVal > 0.2)) {
-					RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
-					RobotMap.ElevSubsystem.jogElevatorPos(Elevator.posPerInch * 3);
+					GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
+					ElevSubsystem.jogElevatorPos(Elevator.posPerInch * 3);
 				}
-				RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.cubeKeep);
+				//GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.cubeKeep);
+				GrabberSubsystem.setCubeGrip(true);
 				isFinished = true;
 				break;
 		}
 		
 	}
 
+	public void completePickup() {
+		state = PickupStates.raiseGrabber;
+	}
+	
 	// Make this return true when this Command no longer needs to run execute()
 	@Override
 	public boolean isFinished() {

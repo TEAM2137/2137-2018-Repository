@@ -26,18 +26,15 @@ public class TeleopMode {
 		RobotMap.ClimbingHook.closeHook();
 		RobotMap.ClimbingRamp.closeRamp();
 		
+		RobotMap.DriveSubsystem.setAutonDriving(false);
+		
 		System.out.println("Is Practice Bot: " + RobotMap.RobInfo.isPracticeBot());
 		
 	}
 	
 	public static void Periodic() {
-		
 		elevTele.callUpdate();
 		driveTele.callUpdate();
-		
-		SmartDashboard.putBoolean("GrabberEndstop", RobotMap.GrabberSubsystem.getEndstop());
-		SmartDashboard.putBoolean("GrabberCubeEye", RobotMap.GrabberSubsystem.getCubeEye());
-		SmartDashboard.putNumber("GrabberEncoder", RobotMap.GrabberSubsystem.getEncoder());
 	}
 }
 

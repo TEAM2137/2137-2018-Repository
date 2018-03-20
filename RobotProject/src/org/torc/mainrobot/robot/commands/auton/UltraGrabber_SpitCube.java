@@ -27,6 +27,7 @@ public class UltraGrabber_SpitCube extends CLCommand {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		grabberSubsys.setCubeGrip(false);
 		grabberSubsys.setGrabberIntakeSpeed((spitSpeed == SpitSpeeds.drop) ? GrabberSpeeds.dropping : GrabberSpeeds.shooting);
 	}
 	

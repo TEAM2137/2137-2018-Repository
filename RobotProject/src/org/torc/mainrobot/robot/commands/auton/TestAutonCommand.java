@@ -4,12 +4,16 @@ import org.torc.mainrobot.tools.CLCommand;
 
 public class TestAutonCommand extends CLCommand {
 	
+	private int waitTime = 0;
+	
 	private int updateCount = 0;
 	
 	String messageToPrint = "";
 	
-	public TestAutonCommand(String message) {
-		messageToPrint = message;		
+	public TestAutonCommand(String message, int waitTimeMs) {
+		messageToPrint = message;
+		
+		waitTime = waitTimeMs / 20;
 	}
 
 	// Called just before this Command runs the first time
@@ -22,7 +26,7 @@ public class TestAutonCommand extends CLCommand {
 	@Override
 	protected void execute() {
 		updateCount++;
-		if (updateCount >= 200) {
+		if (updateCount >= waitTime) {
 			this.finishedCommand = true;
 		}
 	}

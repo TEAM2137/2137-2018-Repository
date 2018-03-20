@@ -34,17 +34,42 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	@Override
 	protected void execute() {
 		
+		/*
 		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.normal)) {
+			RobotMap.ElevSubsystem.jogElevatorPerc(1);
+			operatorInterrupt();
+		}
+		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.normal)) {
+			RobotMap.ElevSubsystem.jogElevatorPerc(-1);
+			operatorInterrupt();
+		}
+		*/
+		
+		/*
+		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.pressed)) {
+			RobotMap.ElevSubsystem.setPosMagic(0);
+			operatorInterrupt();
+		}
+		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.pressed)) {
+			RobotMap.ElevSubsystem.setPosMagic(27000);
+			operatorInterrupt();
+		}
+		*/
+		
+		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.normal)) {
+			RobotMap.GrabberSubsystem.setCubeGrip(false);
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.dropping);
 			operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.normal)) {
+			RobotMap.GrabberSubsystem.setCubeGrip(false);
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.shooting);
 			operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.released) || 
 				RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.released)) {
-			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
+			RobotMap.GrabberSubsystem.setCubeGrip(false);
+			//RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
 		}
 		
 		
@@ -55,6 +80,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.elevMid, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.middle);
+			//RobotMap.GrabberSubsystem.toggleSolenoid();
 			//operatorInterrupt();
 		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.elevHigh, GetType.pressed)) {
@@ -75,13 +101,19 @@ public class Elevator_Teleop extends ControlledStateMachine {
 		if (RobotMap.operatorControl.getButton(RCButtons.elevStartPickup, GetType.pressed)) {
 			if (pickupComm != null && pickupComm.isRunning()) {
 				// Finish command
-				pickupComm.state = PickupStates.raiseGrabber;
+				pickupComm.completePickup();
 			}
 			else {
 				// Start pickup command
-				pickupComm = new UltraGrabber_Pickup();
+				pickupComm = new UltraGrabber_Pickup(RobotMap.GrabberSubsystem, RobotMap.ElevSubsystem);
 				pickupComm.start();
 			}
+		}
+		
+		// Grabber Re-Home
+		if (RobotMap.operatorControl.getButton(RCButtons.homeGrabber, GetType.pressed)) {
+			RobotMap.GrabberSubsystem.homeGrabber();
+			operatorInterrupt();
 		}
 		
 		// Grabber controls

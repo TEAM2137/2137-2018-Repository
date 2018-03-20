@@ -1,9 +1,6 @@
 package org.torc.mainrobot.robot.commands;
 
-import org.torc.mainrobot.robot.Robot;
 import org.torc.mainrobot.tools.CLCommand;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *

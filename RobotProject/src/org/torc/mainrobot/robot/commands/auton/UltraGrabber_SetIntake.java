@@ -21,6 +21,9 @@ public class UltraGrabber_SetIntake extends CLCommand {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		if (grabberSpeed != GrabberSpeeds.cubeKeep) {
+			grabberSubsys.setCubeGrip(false);
+		}
 		grabberSubsys.setGrabberIntakeSpeed(grabberSpeed);
 		finishedCommand = true;
 	}

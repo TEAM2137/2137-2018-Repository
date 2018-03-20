@@ -17,12 +17,12 @@ public class Position_Angle extends CLCommand {
 	private double errSum = 0;
 	private double dLastPos = 0;
 	
-	private final double pGain = 0.09;//0.045;
+	private final double pGain = 0.024;//0.24;//0.045;
 	private final double iGain = 0;
-	private final double dGain = 0.68;//0.1;
+	private final double dGain = 0;//1.5;//0.68;
 	
-	private final double endRange = 5;
-	private final int endWait = 500 / 20;
+	private final double endRange = 3;
+	private final int endWait = 250 / 20;
 			
 	private int endCount = 0;
 	
@@ -34,6 +34,7 @@ public class Position_Angle extends CLCommand {
 	
 	public Position_Angle(DriveTrain dTrain, double mSpeed, double angle, boolean isRelative, boolean keepMoving) {
 		driveSubsystem = dTrain;
+		
 		requires(driveSubsystem);
 		
 		mainSpeed = mSpeed;
@@ -68,6 +69,15 @@ public class Position_Angle extends CLCommand {
 		errSum += err;
 		
 		double offset = (pGain * err) + (errSum * iGain) + (dGain * (gyroVal - dLastPos));
+		
+		// Clamp offset
+		double minClamp = 0.15;
+		if (offset > 0) {
+			offset = (offset>=minClamp)?offset:minClamp;
+		}
+		else {
+			offset = (offset<=-minClamp)?offset:-minClamp;
+		}
 
 		rightSpeed = offset;
 		leftSpeed = -offset;
@@ -81,6 +91,7 @@ public class Position_Angle extends CLCommand {
 		dLastPos = gyroVal;
 		
 		driveSubsystem.setVelocity(leftSpeed, rightSpeed);
+		//driveSubsystem.setPercVBus(leftSpeed, rightSpeed);
 		
 		if (gyroVal > (angleTarget - endRange) && gyroVal < (angleTarget + endRange) ) {
 			endCount++;

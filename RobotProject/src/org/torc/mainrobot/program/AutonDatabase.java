@@ -96,6 +96,12 @@ public class AutonDatabase {
 	
 	private static void autonGetBC() {
 		
+		// If baseline only
+		if (AutonPri == AutonPriority.baselineOnly) {
+			addCrossLine();
+			return;
+		}
+		
 		boolean isRight;
 		char lookingFor;
 		
@@ -129,8 +135,6 @@ public class AutonDatabase {
 		// scale goto
 		else if ((GameData[0] != lookingFor && GameData[1] == lookingFor) || (samePlate && AutonPri == AutonPriority.scale)) {
 			
-			//addCrossLine();
-			
 			//ComList.addSequential(new TestAutonCommand("Waiting for elevatorHome!", 2000));
 			
 			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 260, 0.25, 0, true, true));
@@ -161,8 +165,6 @@ public class AutonDatabase {
 		// 90-across code
 		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
 			
-			//addCrossLine();
-			
 			// 90-across auton
 			
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 203, 0.50, 0, true, true));
@@ -190,6 +192,6 @@ public class AutonDatabase {
 	}
 	
 	private static void addCrossLine() {
-		ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 92, 0.55, 0, true, true));
+		ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 92, 0.50, 0, true, true));
 	}
 }

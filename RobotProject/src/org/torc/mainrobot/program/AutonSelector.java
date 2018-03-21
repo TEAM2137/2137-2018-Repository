@@ -15,7 +15,7 @@ public class AutonSelector implements InheritedPeriodic {
 	
 	public enum StartPositions { left, center, right }
 	
-	public enum AutonPriority { sw1tch, scale } 
+	public enum AutonPriority { sw1tch, scale, baselineOnly } 
 	
 	private StartPositions startPos = StartPositions.center;
 	
@@ -91,6 +91,7 @@ public class AutonSelector implements InheritedPeriodic {
 		
 		SmartDashboard.putBoolean("SwitchPriority", (autonPriority == AutonPriority.sw1tch));
 		SmartDashboard.putBoolean("ScalePriority", (autonPriority == AutonPriority.scale));
+		SmartDashboard.putBoolean("BaselineOnly", (autonPriority == AutonPriority.baselineOnly));
 	}
 	
 }

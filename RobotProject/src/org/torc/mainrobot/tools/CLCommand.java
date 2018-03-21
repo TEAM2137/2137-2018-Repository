@@ -13,7 +13,6 @@ public class CLCommand extends Command {
 	
 	@Override
 	public final boolean isFinished() {
-		// TODO Auto-generated method stub
 		return finishedCommand;
 	}
 	

@@ -50,7 +50,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		
 		//MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0, 5, 0.01, 0);
 		MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0.58, 3, 0.01, 60);
-		elevator.config_IntegralZone(0, 158, 10);
+		elevator.config_IntegralZone(0, 300, 10);
 		
 		endstop = new DigitalInput(endstopPort);
 		
@@ -171,7 +171,6 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	@Override
 	protected void initDefaultCommand() {
-		// TODO Auto-generated method stub
 	}
 	
 	@Override

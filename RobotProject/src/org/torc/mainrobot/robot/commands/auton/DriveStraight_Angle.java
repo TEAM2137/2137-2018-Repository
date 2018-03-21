@@ -50,7 +50,21 @@ public class DriveStraight_Angle extends CLCommand {
 		
 		targetTicks = (int) (RobotMap.DriveSubsystem.TicksPerInch * inches); //(int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
 		
-		slowDownPoint = (targetTicks / 3) * 2;
+		slowDownPoint = getSlowDownPoint();
+	}
+	
+	private int getSlowDownPoint() {
+		int retVal = 0;
+		
+		if (mainSpeed <= 0.5) {
+			retVal = (targetTicks / 3) * 2;
+		}
+		else {
+			// TODO: Test this speed ramp
+			retVal = (targetTicks / 4) * 3;
+		}
+		
+		return retVal;
 	}
 
 	// Called just before this Command runs the first time
@@ -97,10 +111,10 @@ public class DriveStraight_Angle extends CLCommand {
 			//double encAverage = currRightEnc;
 			double tVar = (double)(encAverage - slowDownPoint) / (double)(targetTicks - slowDownPoint);
 			if (mainSpeed >= 0) {
-				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), 0.08, 1);
+				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), 0.095, 1);
 			}
 			else {
-				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), -1, -0.08);
+				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), -1, -0.095);
 			}
 			rightSpeed = leftSpeed;
 		}

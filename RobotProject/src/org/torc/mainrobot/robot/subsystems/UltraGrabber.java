@@ -33,19 +33,17 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	private Solenoid cubeKeep;
 	
 	private boolean hasBeenHomed = false;
-	// TODO: change temportary positions to final
+	
 	public enum GrabberPositions { up, flat, pickup, shooting }
-	// TODO: change temportary speeds to final
+	
 	public enum GrabberSpeeds { none, cubeKeep, pickup, dropping, shooting }
 	
 	public final static double angleMult = 4521;
 	
-										 //-20
 	private final static double ticksMin = -7 * angleMult;
-										 //60
 	private final static double ticksMax = 68 * angleMult;
-												//-20
 	private final static double ticksHomePacked = -28 * angleMult;
+	
 	private boolean packedHome = false;
 	
 	private double targetAngle = 0;

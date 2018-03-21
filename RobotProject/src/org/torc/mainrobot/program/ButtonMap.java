@@ -211,7 +211,6 @@ class ControllerRumble extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		// TODO Auto-generated method stub
 		return isFinished;
 	}
 }

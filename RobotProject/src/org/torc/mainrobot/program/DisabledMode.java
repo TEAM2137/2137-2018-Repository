@@ -27,6 +27,6 @@ public class DisabledMode {
 	}
 	
 	public static void Periodic() {
-		
+		RobotMap.AutonSelect.Update();
 	}
 }

@@ -9,27 +9,28 @@ import org.torc.mainrobot.tools.MathExtra;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutonSelector implements InheritedPeriodic {
+public class AutonSelector {
 	
 	private final int buttonWait = 500 / 20;
 	
 	public enum StartPositions { left, center, right }
 	
-	public enum AutonPriority { sw1tch, scale, baselineOnly } 
+	public enum AutonPriority { sw1tch, scale } 
 	
 	private StartPositions startPos = StartPositions.center;
 	
 	private AutonPriority autonPriority = AutonPriority.sw1tch;
 	
+	private boolean scaleZigBaseline = false;
+	
 	private CommandList autonList;
 	
 	public AutonSelector() {
-		Robot.AddToPeriodic(this);
 	}
 	
 	public void getAuton() {
 		autonList = new CommandList();
-		AutonDatabase.GetAuton(autonList, startPos, autonPriority);
+		AutonDatabase.GetAuton(autonList, startPos, autonPriority, scaleZigBaseline);
 	}
 	
 	public void startAuton() {
@@ -42,8 +43,9 @@ public class AutonSelector implements InheritedPeriodic {
 
 	private int buttonTime = 0;
 	
-	@Override
-	public void Periodic() {
+	public void Update() {
+		
+		//System.out.println("scaleZigBaseLine val: " + scaleZigBaseline);
 		
 		boolean selectLeft = (RobotMap.driverControl.getButton(RCButtons.autonSelectLeft, GetType.normal) || 
 							RobotMap.operatorControl.getButton(RCButtons.autonSelectLeft, GetType.normal));
@@ -53,7 +55,8 @@ public class AutonSelector implements InheritedPeriodic {
 							RobotMap.operatorControl.getButton(RCButtons.autonPriorityUp, GetType.normal));
 		boolean selectDown = (RobotMap.driverControl.getButton(RCButtons.autonPriorityDown, GetType.normal) || 
 							RobotMap.operatorControl.getButton(RCButtons.autonPriorityDown, GetType.normal));
-		
+		boolean selectBaseline = //(RobotMap.driverControl.getButton(RCButtons.autonZigBaseToggle, GetType.pressed) || 
+							RobotMap.operatorControl.getButton(RCButtons.autonZigBaseToggle, GetType.pressed);
 		
 		if (selectLeft || selectRight || selectUp || selectDown) {
 			buttonTime++;
@@ -83,6 +86,17 @@ public class AutonSelector implements InheritedPeriodic {
 			else if (selectDown) {
 				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal() - 1, 0, AutonPriority.values().length - 1)];
 			}
+			/*
+			else if (selectBaseline) {
+				System.out.println("selectBaseline invert!");
+				scaleZigBaseline = !scaleZigBaseline;
+			}
+			*/
+		}
+		
+		// Select baseline
+		if (selectBaseline) {
+			scaleZigBaseline = !scaleZigBaseline;
 		}
 		
 		SmartDashboard.putBoolean("AutonSelectLeft", (startPos == StartPositions.left));
@@ -91,7 +105,8 @@ public class AutonSelector implements InheritedPeriodic {
 		
 		SmartDashboard.putBoolean("SwitchPriority", (autonPriority == AutonPriority.sw1tch));
 		SmartDashboard.putBoolean("ScalePriority", (autonPriority == AutonPriority.scale));
-		SmartDashboard.putBoolean("BaselineOnly", (autonPriority == AutonPriority.baselineOnly));
+		
+		SmartDashboard.putBoolean("ScaleZigBaseline", scaleZigBaseline);
 	}
 	
 }

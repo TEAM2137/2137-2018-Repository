@@ -41,8 +41,10 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	public final static double angleMult = 4521;
 	
 	private final static double ticksMin = -7 * angleMult;
-	private final static double ticksMax = 68 * angleMult;
-	private final static double ticksHomePacked = -28 * angleMult;
+										// 68
+	private final static double ticksMax = 76 * angleMult;
+												//-28
+	private final static double ticksHomePacked = -18 * angleMult;
 	
 	private boolean packedHome = false;
 	
@@ -78,16 +80,16 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		int toReturn = 0;
 		switch(position) {
 			case up:
-				toReturn = -7;//-28;
+				toReturn = -7;
 				break;
 			case pickup:
-				toReturn = 68; //60
+				toReturn = 76; //68
 				break;
 			case flat:
-				toReturn = 60;
+				toReturn = 68; //60
 				break;
 			case shooting:
-				toReturn = 8;
+				toReturn = 12; //8
 				break;
 		}
 		SmartDashboard.putNumber("GrabberTarget", (toReturn * angleMult));

@@ -6,6 +6,7 @@ import org.torc.mainrobot.program.ButtonMap.RCAxis;
 import org.torc.mainrobot.program.ButtonMap.RCButtons;
 import org.torc.mainrobot.robot.ControlledStateMachine;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
+import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 
 public class DriveTrain_Teleop extends ControlledStateMachine {
 	
@@ -23,8 +24,9 @@ public class DriveTrain_Teleop extends ControlledStateMachine {
 			RobotMap.DriveSubsystem.setShifters(!RobotMap.DriveSubsystem.getShifters());
 		}
 		
-		// Open hook
+		// Open hook and raise grabber
 		if (RobotMap.driverControl.getButton(RCButtons.hookRelease, GetType.pressed)) {
+			RobotMap.GrabberSubsystem.findGrabberPosition(GrabberPositions.up);
 			RobotMap.ClimbingHook.openHook();
 		}
 		

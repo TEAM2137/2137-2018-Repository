@@ -18,6 +18,8 @@ public class AutonDatabase {
 	private static StartPositions StartPosition;
 	private static AutonPriority AutonPri;
 	
+	private static boolean IgnoreScaleZigZag;
+	
 	private static char[] GameData;
 	
 	/**
@@ -28,10 +30,12 @@ public class AutonDatabase {
 	 * @param startPosition
 	 * @param autonPri
 	 */
-	public static void GetAuton(CommandList cList, StartPositions sPosition, AutonPriority autonP) {
+	public static void GetAuton(CommandList cList, StartPositions sPosition, AutonPriority autonP, boolean ignoreScaleZig) {
 		ComList = cList;
 		StartPosition = sPosition;
 		AutonPri = autonP;
+		
+		IgnoreScaleZigZag = ignoreScaleZig;
 		
 		String gData = DriverStation.getInstance().getGameSpecificMessage();
 		
@@ -96,12 +100,6 @@ public class AutonDatabase {
 	
 	private static void autonGetBC() {
 		
-		// If baseline only
-		if (AutonPri == AutonPriority.baselineOnly) {
-			addCrossLine();
-			return;
-		}
-		
 		boolean isRight;
 		char lookingFor;
 		
@@ -165,6 +163,11 @@ public class AutonDatabase {
 		// 90-across code
 		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
 			
+			if (IgnoreScaleZigZag) {
+				addCrossLine();
+				return;
+			}
+			
 			// 90-across auton
 			
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 203, 0.50, 0, true, true));
@@ -172,7 +175,6 @@ public class AutonDatabase {
 			
 			Elevator_Position elevHigh = new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.high);
 			ComList.addParallel(elevHigh);
-			
 																				// 179
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 215, 0.50, 0, true, true));
 																						 // 90:-90
@@ -187,8 +189,6 @@ public class AutonDatabase {
 			ComList.addSequential(new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.floor));
 			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 46, 0.25, isRight?90:-90, true, true));
 		}
-		
-		
 	}
 	
 	private static void addCrossLine() {

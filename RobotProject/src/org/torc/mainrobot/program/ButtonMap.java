@@ -20,7 +20,7 @@ public class ButtonMap {
 							grabberSpitSlow, grabberSpitFast, autonSelectRight, 
 							autonSelectLeft, autonPriorityUp, autonPriorityDown,
 							autonZigBaseToggle, hookRelease, rampRelease, 
-							homeGrabber}
+							homeGrabber, homeELevator}
 	
 	public enum RCAxis { leftX, leftY, rightX, rightY,
 						grabberJog }
@@ -88,6 +88,9 @@ public class ButtonMap {
 				break;
 			case homeGrabber:
 				toReturn = getEasyButtonInternal(8, getType);
+				break;
+			case homeELevator:
+				toReturn = getEasyButtonInternal(7, getType);
 				break;
 		}
 		

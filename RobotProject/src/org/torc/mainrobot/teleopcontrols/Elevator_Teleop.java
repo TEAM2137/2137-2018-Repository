@@ -34,27 +34,10 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	@Override
 	protected void execute() {
 		
-		/*
-		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.normal)) {
-			RobotMap.ElevSubsystem.jogElevatorPerc(1);
-			operatorInterrupt();
+		// Manual elevator homing
+		if (RobotMap.operatorControl.getButton(RCButtons.homeELevator, GetType.pressed)) {
+			RobotMap.ElevSubsystem.homeElevator();
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.normal)) {
-			RobotMap.ElevSubsystem.jogElevatorPerc(-1);
-			operatorInterrupt();
-		}
-		*/
-		
-		/*
-		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.pressed)) {
-			RobotMap.ElevSubsystem.setPosMagic(0);
-			operatorInterrupt();
-		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.pressed)) {
-			RobotMap.ElevSubsystem.setPosMagic(27000);
-			operatorInterrupt();
-		}
-		*/
 		
 		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.normal)) {
 			RobotMap.GrabberSubsystem.setCubeGrip(false);

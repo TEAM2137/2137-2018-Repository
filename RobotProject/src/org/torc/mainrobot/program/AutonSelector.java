@@ -17,20 +17,19 @@ public class AutonSelector {
 	
 	public enum AutonPriority { sw1tch, scale } 
 	
-	private StartPositions startPos = StartPositions.center;
-	
-	private AutonPriority autonPriority = AutonPriority.sw1tch;
-	
-	private boolean scaleZigBaseline = false;
+	private AutonData aData = new AutonData();
 	
 	private CommandList autonList;
 	
-	public AutonSelector() {
+	public class AutonData {
+		public StartPositions startPos = StartPositions.center;
+		public AutonPriority autonPriority = AutonPriority.sw1tch;
+		public boolean scaleZigBaselineOnly = false;
 	}
 	
 	public void getAuton() {
 		autonList = new CommandList();
-		AutonDatabase.GetAuton(autonList, startPos, autonPriority, scaleZigBaseline);
+		AutonDatabase.GetAuton(autonList, aData);
 	}
 	
 	public void startAuton() {
@@ -45,7 +44,7 @@ public class AutonSelector {
 	
 	public void Update() {
 		
-		//System.out.println("scaleZigBaseLine val: " + scaleZigBaseline);
+		//System.out.println("scaleZigBaselineOnly val: " + scaleZigBaseline);
 		
 		boolean selectLeft = (RobotMap.driverControl.getButton(RCButtons.autonSelectLeft, GetType.normal) || 
 							RobotMap.operatorControl.getButton(RCButtons.autonSelectLeft, GetType.normal));
@@ -75,38 +74,38 @@ public class AutonSelector {
 		
 		if (selectMove) {
 			if (selectLeft) {
-				startPos = StartPositions.values()[MathExtra.clamp(startPos.ordinal() - 1, 0, StartPositions.values().length - 1)];
+				aData.startPos = StartPositions.values()[MathExtra.clamp(aData.startPos.ordinal() - 1, 0, StartPositions.values().length - 1)];
 			}
 			else if (selectRight) {
-				startPos = StartPositions.values()[MathExtra.clamp(startPos.ordinal() + 1, 0, StartPositions.values().length - 1)];
+				aData.startPos = StartPositions.values()[MathExtra.clamp(aData.startPos.ordinal() + 1, 0, StartPositions.values().length - 1)];
 			}
 			else if (selectUp) {
-				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal() + 1, 0, AutonPriority.values().length - 1)];
+				aData.autonPriority = AutonPriority.values()[MathExtra.clamp(aData.startPos.ordinal() + 1, 0, AutonPriority.values().length - 1)];
 			}
 			else if (selectDown) {
-				autonPriority = AutonPriority.values()[MathExtra.clamp(startPos.ordinal() - 1, 0, AutonPriority.values().length - 1)];
+				aData.autonPriority = AutonPriority.values()[MathExtra.clamp(aData.startPos.ordinal() - 1, 0, AutonPriority.values().length - 1)];
 			}
 			/*
 			else if (selectBaseline) {
 				System.out.println("selectBaseline invert!");
-				scaleZigBaseline = !scaleZigBaseline;
+				scaleZigBaselineOnly = !scaleZigBaseline;
 			}
 			*/
 		}
 		
 		// Select baseline
 		if (selectBaseline) {
-			scaleZigBaseline = !scaleZigBaseline;
+			aData.scaleZigBaselineOnly = !aData.scaleZigBaselineOnly;
 		}
 		
-		SmartDashboard.putBoolean("AutonSelectLeft", (startPos == StartPositions.left));
-		SmartDashboard.putBoolean("AutonSelectCenter", (startPos == StartPositions.center));
-		SmartDashboard.putBoolean("AutonSelectRight", (startPos == StartPositions.right));
+		SmartDashboard.putBoolean("AutonSelectLeft", (aData.startPos == StartPositions.left));
+		SmartDashboard.putBoolean("AutonSelectCenter", (aData.startPos == StartPositions.center));
+		SmartDashboard.putBoolean("AutonSelectRight", (aData.startPos == StartPositions.right));
 		
-		SmartDashboard.putBoolean("SwitchPriority", (autonPriority == AutonPriority.sw1tch));
-		SmartDashboard.putBoolean("ScalePriority", (autonPriority == AutonPriority.scale));
+		SmartDashboard.putBoolean("SwitchPriority", (aData.autonPriority == AutonPriority.sw1tch));
+		SmartDashboard.putBoolean("ScalePriority", (aData.autonPriority == AutonPriority.scale));
 		
-		SmartDashboard.putBoolean("ScaleZigBaseline", scaleZigBaseline);
+		SmartDashboard.putBoolean("ScaleZigBaseline", aData.scaleZigBaselineOnly);
 	}
 	
 }

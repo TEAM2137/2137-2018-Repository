@@ -1,5 +1,6 @@
 package org.torc.mainrobot.robot.subsystems;
 
+import org.omg.PortableServer.ServantRetentionPolicyOperations;
 import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.InheritedPeriodic;
 import org.torc.mainrobot.robot.commands.Elevator_Home;
@@ -18,7 +19,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	
-	public enum ElevatorPositions { floor, middle, climb, high }
+	public enum ElevatorPositions { zero, floor, middle, climb, high }
 	
 	public ElevatorPositions elevatorPosition = ElevatorPositions.floor;
 	
@@ -64,6 +65,9 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	public static int GetElevatorPositions(ElevatorPositions position) {
 		int toReturn = 0;
 		switch (position) {
+			case zero:
+				toReturn = 0;
+				break;
 			case floor:
 				toReturn = 0;
 				break;
@@ -98,6 +102,11 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	 * another homing to work again.
 	 */
 	public void deHome() {
+		if (elevHomer != null && elevHomer.isRunning()) {
+			elevHomer.cancel();
+			elevHomer.free();
+			elevHomer = null;
+		}
 		hasBeenHomed = false;
 		targetPosition = 0;
 		System.out.println("Elevator De-Homed!!");
@@ -180,6 +189,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 			elevHomer.free();
 			elevHomer = null;
 			hasBeenHomed = true;
+			positionFind(ElevatorPositions.zero);
 		}
 		// Print Encoders
 		printEncoder();

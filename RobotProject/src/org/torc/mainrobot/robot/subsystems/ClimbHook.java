@@ -7,8 +7,8 @@ public class ClimbHook extends Subsystem {
 
 	private Servo cServo;
 	
-	private final double homePos = 0;
-	private final double openPos = 1;
+	private final double homePos = 1;
+	private final double openPos = 0;
 	
 	private boolean isOpen = false;
 	

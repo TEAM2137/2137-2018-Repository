@@ -33,6 +33,7 @@ public class DriveTrain_Teleop extends ControlledStateMachine {
 		// Go to climb position
 		if (RobotMap.driverControl.getButton(RCButtons.elevClimb, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.climb);
+			//RobotMap.ElevSubsystem.positionFind(ElevatorPositions.high);
 		}
 		
 		// Open ramp

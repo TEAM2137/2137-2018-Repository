@@ -15,10 +15,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class AutonDatabase {
 	
 	private static CommandList ComList;
-	private static StartPositions StartPosition;
-	private static AutonPriority AutonPri;
 	
-	private static boolean IgnoreScaleZigZag;
+	private static AutonSelector.AutonData aData;
 	
 	private static char[] GameData;
 	
@@ -30,14 +28,15 @@ public class AutonDatabase {
 	 * @param startPosition
 	 * @param autonPri
 	 */
-	public static void GetAuton(CommandList cList, StartPositions sPosition, AutonPriority autonP, boolean ignoreScaleZig) {
+	public static void GetAuton(CommandList cList, AutonSelector.AutonData autonData) {
 		ComList = cList;
-		StartPosition = sPosition;
-		AutonPri = autonP;
 		
-		IgnoreScaleZigZag = ignoreScaleZig;
+		aData = autonData;
 		
 		String gData = DriverStation.getInstance().getGameSpecificMessage();
+		
+		// uppercase gData
+		gData.toUpperCase();
 		
 		GameData = new char[3];
 		GameData[0] = gData.charAt(0);
@@ -49,7 +48,6 @@ public class AutonDatabase {
 		autonGetStart();
 	}
 	
-	
 	private static void autonGetStart() {
 		System.out.println("GameData: " + GameData[0] + GameData[1] + GameData[2]);
 		
@@ -58,7 +56,7 @@ public class AutonDatabase {
 		// Start Intake for all
 		ComList.addParallel(new UltraGrabber_SetIntake(RobotMap.GrabberSubsystem, GrabberSpeeds.cubeKeep));
 		
-		switch(StartPosition) {
+		switch(aData.startPos) {
 			// Start C
 			case left:
 				autonGetBC();
@@ -103,7 +101,7 @@ public class AutonDatabase {
 		boolean isRight;
 		char lookingFor;
 		
-		switch (StartPosition) {
+		switch (aData.startPos) {
 			case left:
 				isRight = false;
 				lookingFor = 'L';
@@ -117,10 +115,69 @@ public class AutonDatabase {
 				return;
 		}
 		
-		boolean samePlate = (GameData[0] == lookingFor && GameData[1] == lookingFor);
+		// boolean samePlate = (GameData[0] == lookingFor && GameData[1] == lookingFor);
 		
+		// Switch is ours only
+		if (GameData[0] == lookingFor && GameData[1] != lookingFor) {
+			if (aData.autonPriority == AutonPriority.scale) {
+				if (!aData.scaleZigBaselineOnly) {
+					BCFunc.addBC90Scale(isRight);
+				}
+				else {
+					BCFunc.addBCCrossLine();
+				}
+			}
+			else {
+				BCFunc.addBCSwitch(isRight);
+			}
+		}
+		// Scale is ours only
+		else if (GameData[0] != lookingFor && GameData[1] == lookingFor) {
+			BCFunc.addBCStraightScale(isRight);
+		}
+		// Neither is ours
+		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
+			if (!aData.scaleZigBaselineOnly) {
+				BCFunc.addBC90Scale(isRight);
+			}
+			else {
+				BCFunc.addBCCrossLine();
+			}
+		}
+		// Both are ours.
+		else if (GameData[0] == lookingFor && GameData[1] == lookingFor) {
+			if (aData.autonPriority == AutonPriority.sw1tch) {
+				BCFunc.addBCSwitch(isRight);
+			}
+			else {
+				BCFunc.addBCStraightScale(isRight);
+			}
+		}
+		
+		/*
 		// switch goto
-		if ((GameData[0] == lookingFor && GameData[1] != lookingFor) || (samePlate && AutonPri == AutonPriority.sw1tch)) {
+		if ((GameData[0] == lookingFor && GameData[1] != lookingFor) || (samePlate && aData.autonPriority == AutonPriority.sw1tch)) {
+			BCFunc.addBCSwitch(isRight);
+		}
+		// scale goto
+		else if ((GameData[0] != lookingFor && GameData[1] == lookingFor) || (samePlate && aData.autonPriority == AutonPriority.scale)) {
+			BCFunc.addBCStraightScale(isRight);
+		}
+		// 90-across code
+		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
+			
+			if (aData.scaleZigBaseline) {
+				BCFunc.addBCCrossLine();
+				return;
+			}
+			// 90-across auton
+			BCFunc.addBC90Scale(isRight);
+		}
+		*/
+	}
+	
+	private static class BCFunc {
+		private static void addBCSwitch(boolean isRight) {
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 109, 0.30, 0, true, false));
 			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.30, isRight?-90:90, true, true));
 			
@@ -130,13 +187,8 @@ public class AutonDatabase {
 			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 2, 0.30, 0, true, true));
 			ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 		}
-		// scale goto
-		else if ((GameData[0] != lookingFor && GameData[1] == lookingFor) || (samePlate && AutonPri == AutonPriority.scale)) {
-			
-			//ComList.addSequential(new TestAutonCommand("Waiting for elevatorHome!", 2000));
-			
-			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 260, 0.25, 0, true, true));
-			
+		
+		private static void addBCStraightScale(boolean isRight) {
 			double longSpeed = 0.5;
 			
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 100, longSpeed, 0, true, false));
@@ -150,7 +202,8 @@ public class AutonDatabase {
 			
 			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, longSpeed, isRight?-45:45, true, false));
 			
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 6, 0.25, 0, true, true));
+																				// 6
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 10, 0.25, 0, true, true));
 			
 			ComList.addSequential(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
 			
@@ -159,17 +212,11 @@ public class AutonDatabase {
 			ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.shoot));
 			
 			ComList.addSequential(new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.floor));
+			
+			ComList.addSequential(new PercDrive_Time(RobotMap.DriveSubsystem, 1000, -0.25));
 		}
-		// 90-across code
-		else if (GameData[0] != lookingFor && GameData[1] != lookingFor) {
-			
-			if (IgnoreScaleZigZag) {
-				addCrossLine();
-				return;
-			}
-			
-			// 90-across auton
-			
+		
+		private static void addBC90Scale(boolean isRight) {
 			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 203, 0.50, 0, true, true));
 			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.50, isRight?-90:90, true, false));
 			
@@ -180,18 +227,19 @@ public class AutonDatabase {
 																						 // 90:-90
 			ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.50, isRight?110:-110, true, false));
 			ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
-			
-			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 22, 0.25, 0, true, true));
+																				// 22
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 30, 0.25, 0, true, true));
 			ComList.addSequential(new Command_PauseUntil(elevHigh));
 			ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 			ComList.addSequential(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.up));
 			
 			ComList.addSequential(new Elevator_Position(RobotMap.ElevSubsystem, ElevatorPositions.floor));
+			ComList.addSequential(new PercDrive_Time(RobotMap.DriveSubsystem, 1000, -0.25));
 			//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 46, 0.25, isRight?90:-90, true, true));
 		}
-	}
-	
-	private static void addCrossLine() {
-		ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 92, 0.50, 0, true, true));
+		
+		private static void addBCCrossLine() {
+			ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 92, 0.50, 0, true, true));
+		}
 	}
 }

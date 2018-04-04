@@ -16,14 +16,15 @@ public class DisabledMode {
 		// Dehome grabber
 		RobotMap.GrabberSubsystem.deHome();
 		
-		// zero encoders for testing
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.left);
 		RobotMap.DriveSubsystem.zeroEncoder(DTSide.right);
-		// Zero gyro
-		//RobotMap.DriveSubsystem.zeroGyro();
 		
+		// Reset the AutonSelector
 		RobotMap.AutonSelect = new AutonSelector();
 		
+		/* Set drivetrain speed to 0 just in 
+		 * case there is still a set value. */
+		RobotMap.DriveSubsystem.setPercVBus(0, 0);
 	}
 	
 	public static void Periodic() {

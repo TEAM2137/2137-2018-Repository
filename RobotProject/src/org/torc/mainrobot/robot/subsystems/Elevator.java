@@ -117,7 +117,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void jogElevatorPerc(double controllerVal) {
-		elevator.set(ControlMode.PercentOutput, MathExtra.clamp(controllerVal, (minLimitTripped ? 0 : -0.3), (maxLimitTripped ? 0 : 0.3)));
+		elevator.set(ControlMode.PercentOutput, MathExtra.clamp(controllerVal, (minLimitTripped ? 0 : -1), (maxLimitTripped ? 0 : 1)));
 	}
 	
 	public void positionFind(ElevatorPositions position) {

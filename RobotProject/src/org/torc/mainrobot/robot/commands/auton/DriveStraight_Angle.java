@@ -13,7 +13,6 @@ public class DriveStraight_Angle extends CLCommand {
 	private int targetTicks = 0;
 	private double mainSpeed = 0;
 	private double angleTarget = 0;
-	private boolean relative = true;
 	private boolean speedRamp = true;
 	
 	private int leftEncBase = 0;
@@ -35,7 +34,7 @@ public class DriveStraight_Angle extends CLCommand {
 	private final double iGain = 0;
 	private final double dGain = 0;//0.68;
 	
-	public DriveStraight_Angle(DriveTrain dTrain, double inches, double mSpeed, double angle, boolean isRelative, boolean rampSpeed) {
+	public DriveStraight_Angle(DriveTrain dTrain, double inches, double mSpeed, double angle, boolean rampSpeed) {
 		driveSubsystem = dTrain;
 		
 		requires(driveSubsystem);
@@ -43,7 +42,6 @@ public class DriveStraight_Angle extends CLCommand {
 		mainSpeed = mSpeed;
 		angleTarget = angle;
 		
-		relative = isRelative;
 		speedRamp = rampSpeed;
 		
 		distInch = inches;
@@ -61,7 +59,7 @@ public class DriveStraight_Angle extends CLCommand {
 		}
 		else {
 			// TODO: Test this speed ramp
-			retVal = (targetTicks / 4) * 3;
+			retVal = (targetTicks / 16) * 15;
 		}
 		
 		return retVal;

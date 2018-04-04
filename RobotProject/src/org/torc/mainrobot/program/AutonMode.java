@@ -14,6 +14,9 @@ public class AutonMode {
 		RobotMap.AutonSelect.startAuton();
 		
 		RobotMap.DriveSubsystem.setAutonDriving(true);
+		
+		// Garuntee cube grip for auton
+		RobotMap.GrabberSubsystem.setCubeGrip(true);
 	}
 	
 	public static void Periodic() {

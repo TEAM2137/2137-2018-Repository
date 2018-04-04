@@ -10,12 +10,20 @@ import org.torc.mainrobot.robot.commands.UltraGrabber_Pickup.PickupStates;
 import org.torc.mainrobot.robot.subsystems.Elevator;
 import org.torc.mainrobot.robot.subsystems.Elevator.ElevatorPositions;
 import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberSpeeds;
+import org.torc.mainrobot.tools.MathExtra;
 
 public class Elevator_Teleop extends ControlledStateMachine {
 	
 	// Roughly 6 inches
 	// (and a smidge!!)
 	static int jogInterval = (int)((double)Elevator.posPerInch * (11 / 3));
+	
+	private int elevHome_Time = 0;
+	
+	//private final int ElevHome_HomeWait = 500 / 20;
+	private final int ElevHome_JogModeWait = 3000 / 20;
+	
+	private boolean elevPercJogMode = false;
 	
 	/*
 	private enum GrabberStates { operatorControl, pickup }
@@ -35,8 +43,28 @@ public class Elevator_Teleop extends ControlledStateMachine {
 	protected void execute() {
 		
 		// Manual elevator homing
+		/*
 		if (RobotMap.operatorControl.getButton(RCButtons.homeELevator, GetType.pressed)) {
 			RobotMap.ElevSubsystem.homeElevator();
+		}
+		*/
+		
+		if (RobotMap.operatorControl.getButton(RCButtons.homeELevator, GetType.normal)) {
+			elevHome_Time += (elevHome_Time != -1)?1:0;
+			
+			if (elevHome_Time >= ElevHome_JogModeWait) {
+				elevHome_Time = -1;
+				RobotMap.ElevSubsystem.deHome();
+				elevPercJogMode = true;
+				RobotMap.operatorControl.setDualRumbleTime(1, 0.5);
+			}
+		}
+		else if (RobotMap.operatorControl.getButton(RCButtons.homeELevator, GetType.released)) {
+			if (elevHome_Time != -1) {
+				RobotMap.ElevSubsystem.homeElevator();
+				elevPercJogMode = false;
+			}
+			elevHome_Time = 0;
 		}
 		
 		if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.normal)) {
@@ -54,8 +82,7 @@ public class Elevator_Teleop extends ControlledStateMachine {
 			RobotMap.GrabberSubsystem.setCubeGrip(false);
 			//RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
 		}
-		
-		
+				
 		// Operator buttons all have override over other functions
 		if (RobotMap.operatorControl.getButton(RCButtons.elevLow, GetType.pressed)) {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.floor);
@@ -70,13 +97,26 @@ public class Elevator_Teleop extends ControlledStateMachine {
 			RobotMap.ElevSubsystem.positionFind(ElevatorPositions.high);
 			//operatorInterrupt();
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorUp, GetType.pressed)) {
-			RobotMap.ElevSubsystem.jogElevatorPos(jogInterval);
-			//operatorInterrupt();
+		
+		// Elevator jogging
+		if (!elevPercJogMode) {
+			if (RobotMap.operatorControl.getButton(RCButtons.elevatorUp, GetType.pressed)) {
+				RobotMap.ElevSubsystem.jogElevatorPos(jogInterval);
+			}
+			else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, GetType.pressed)) {
+				RobotMap.ElevSubsystem.jogElevatorPos(-jogInterval);
+			}
 		}
-		else if (RobotMap.operatorControl.getButton(RCButtons.elevatorDown, GetType.pressed)) {
-			RobotMap.ElevSubsystem.jogElevatorPos(-jogInterval);
-			//operatorInterrupt();
+		else {
+			double jogAmt = 0;
+			jogAmt = -RobotMap.operatorControl.getAxis(RCAxis.elevatorManuJog);
+			
+			if (MathExtra.applyDeadband(jogAmt, 0.2) == 0) {
+				// Set jogAmount to keep the jogger "still"
+				jogAmt = 0.2;
+			}
+			
+			RobotMap.ElevSubsystem.jogElevatorPerc(jogAmt);
 		}
 		
 		

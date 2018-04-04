@@ -23,7 +23,7 @@ public class ButtonMap {
 							homeGrabber, homeELevator}
 	
 	public enum RCAxis { leftX, leftY, rightX, rightY,
-						grabberJog }
+						grabberJog, elevatorManuJog }
 	
 	public enum GetType { normal, pressed, released }
 	
@@ -116,6 +116,9 @@ public class ButtonMap {
 			case grabberJog:
 				toReturn = -mController.getRawAxis(3) + mController.getRawAxis(2);
 				toReturn = MathExtra.clamp(toReturn, -1, 1);
+				break;
+			case elevatorManuJog:
+				toReturn = mController.getY(Hand.kLeft);
 				break;
 		}
 		

@@ -59,11 +59,13 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 
 		angleMotor = new TalonSRX(angleTalonPort);
 		
-		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 0.005, 0.00001, 0);
-		angleMotor.config_IntegralZone(0, 40000, 10);
+		//																0.00001
+		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 0.005, 0.000005, 0);
 		
 		angleMotor.configPeakOutputForward(0.75, 10);
 		angleMotor.configPeakOutputReverse(-0.75, 10);
+		
+		//angleMotor.config_IntegralZone(0, 75000, 10);
 		
 		endstop = new DigitalInput(endstopPort);
 		
@@ -248,6 +250,12 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				packedHome = false;
 			}
 		}
+		
+		SmartDashboard.putBoolean("GrabberEndstop", getEndstop());
+		SmartDashboard.putBoolean("GrabberCubeEye", getCubeEye());
+		SmartDashboard.putNumber("GrabberEncoder", getEncoder());
+		
+		SmartDashboard.putNumber("GrabberError", angleMotor.getClosedLoopError(0));
 	}
 }
 
@@ -307,11 +315,6 @@ class UltraGrabber_Homing implements InheritedPeriodic {
 			started = false;
 		}
 		
-		SmartDashboard.putBoolean("GrabberEndstop", RobotMap.GrabberSubsystem.getEndstop());
-		SmartDashboard.putBoolean("GrabberCubeEye", RobotMap.GrabberSubsystem.getCubeEye());
-		SmartDashboard.putNumber("GrabberEncoder", RobotMap.GrabberSubsystem.getEncoder());
-		
 	}
 	
 }
-

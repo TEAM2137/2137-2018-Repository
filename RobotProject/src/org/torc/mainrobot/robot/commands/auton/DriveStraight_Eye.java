@@ -29,7 +29,7 @@ public class DriveStraight_Eye extends CLCommand {
 	private int endCountAmt = 500/20;
 	
 	private int cubeTime = 0;
-	private final int CubeWait = 0;
+	private int CubeWait = 0;
 	
 	// PID Stuff
 	private double errSum = 0;
@@ -39,7 +39,7 @@ public class DriveStraight_Eye extends CLCommand {
 	private final double iGain = 0;
 	private final double dGain = 0;//0.68;
 	
-	public DriveStraight_Eye(DriveTrain dTrain, UltraGrabber grabber, Elevator elev, double mSpeed, double angle) {
+	public DriveStraight_Eye(DriveTrain dTrain, UltraGrabber grabber, Elevator elev, double mSpeed, double angle, int timeoutMs) {
 		driveSubsystem = dTrain;
 		
 		elevSubsystem = elev;
@@ -50,6 +50,8 @@ public class DriveStraight_Eye extends CLCommand {
 		
 		mainSpeed = mSpeed;
 		angleTarget = angle;
+		
+		CubeWait = timeoutMs/20;
 	}
 
 	// Called just before this Command runs the first time
@@ -101,8 +103,13 @@ public class DriveStraight_Eye extends CLCommand {
 		
 		dLastPos = gyroVal;
 		
-		//driveSubsystem.setVelocity(leftSpeed, rightSpeed);
-		driveSubsystem.setPercVBus(leftSpeed, rightSpeed);
+		if (cubeTime <= 0) {
+			//driveSubsystem.setVelocity(leftSpeed, rightSpeed);
+			driveSubsystem.setPercVBus(leftSpeed, rightSpeed);
+		}
+		else {
+			driveSubsystem.setPercVBus(0, 0);
+		}
 		
 		// Get photoeye
 		if (grabberSubsystem.getCubeEye()) {

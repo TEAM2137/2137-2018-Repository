@@ -14,7 +14,7 @@ public class UltraGrabber_SpitCube extends CLCommand {
 	
 	private int eyeTime = 0;
 	
-	private final int eyeTimeWait = 1000 / 20;
+	private final int eyeTimeWait = 250 / 20;
 	
 	public UltraGrabber_SpitCube(UltraGrabber grabber, SpitSpeeds speed) {
 		grabberSubsys = grabber;

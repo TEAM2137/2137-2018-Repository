@@ -39,14 +39,15 @@ public class DriveStraight_Angle extends CLCommand {
 		
 		requires(driveSubsystem);
 		
-		mainSpeed = mSpeed;
+		mainSpeed = Math.abs(mSpeed);
 		angleTarget = angle;
 		
 		speedRamp = rampSpeed;
 		
 		distInch = inches;
 		
-		targetTicks = (int) (RobotMap.DriveSubsystem.TicksPerInch * inches); //(int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
+		targetTicks = (int) (RobotMap.DriveSubsystem.TicksPerInch * Math.abs(inches)); //(int) ((driveSubsystem.TicksPerRev / (driveSubsystem.WheelDiameterIn * Math.PI)) * inches);
+		System.out.println("TargetTicks: " + targetTicks);
 		
 		slowDownPoint = getSlowDownPoint();
 	}
@@ -92,8 +93,11 @@ public class DriveStraight_Angle extends CLCommand {
 			return;
 		}
 		
-		int currLeftEnc = driveSubsystem.getEncoder(DTSide.left) - leftEncBase; //Math.abs(driveSubsystem.getEncoder(DTSide.left) - leftEncBase);
-		int currRightEnc = driveSubsystem.getEncoder(DTSide.right) - rightEncBase; //Math.abs(driveSubsystem.getEncoder(DTSide.right) - rightEncBase);
+		int currLeftEnc = Math.abs(driveSubsystem.getEncoder(DTSide.left) - leftEncBase);//Math.abs((distInch>0)?(driveSubsystem.getEncoder(DTSide.left) - leftEncBase):(driveSubsystem.getEncoder(DTSide.left) + leftEncBase)); //Math.abs(driveSubsystem.getEncoder(DTSide.left) - leftEncBase);
+		int currRightEnc = Math.abs(driveSubsystem.getEncoder(DTSide.right) - rightEncBase);//Math.abs((distInch>0)?(driveSubsystem.getEncoder(DTSide.right) - rightEncBase):(driveSubsystem.getEncoder(DTSide.right) + rightEncBase)); //Math.abs(driveSubsystem.getEncoder(DTSide.right) - rightEncBase);
+		
+		System.out.println("currLeftEnc: " + currLeftEnc);
+		System.out.println("currRightEnc: " + currRightEnc);
 		
 		double leftSpeed = 0;
 		double rightSpeed = 0;
@@ -108,18 +112,19 @@ public class DriveStraight_Angle extends CLCommand {
 			
 			//double encAverage = currRightEnc;
 			double tVar = (double)(encAverage - slowDownPoint) / (double)(targetTicks - slowDownPoint);
-			if (mainSpeed >= 0) {
-				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), 0.095, 1);
-			}
-			else {
-				leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), -1, -0.095);
-			}
+			
+			leftSpeed = MathExtra.clamp(MathExtra.lerp(mainSpeed, 0, tVar), 0.095, 1);
 			rightSpeed = leftSpeed;
 		}
 		else {
 			// Set motor speeds
 			leftSpeed = mainSpeed;
 			rightSpeed = mainSpeed;
+		}
+		
+		if (distInch < 0) {
+			leftSpeed = -leftSpeed;
+			rightSpeed = -rightSpeed;
 		}
 		
 		double err = MathExtra.clamp((gyroVal - gyroBase) - angleTarget, -20, 20);

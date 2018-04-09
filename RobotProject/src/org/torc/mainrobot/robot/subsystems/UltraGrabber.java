@@ -38,7 +38,8 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 	public enum GrabberSpeeds { none, cubeKeep, pickup, dropping, shooting }
 	
-	public final static double angleMult = 4521;
+	//public final static double angleMult = 4521;
+	public final static double angleMult = 11.3778;
 	
 	private final static double ticksMin = -7 * angleMult;
 										// 68
@@ -60,12 +61,12 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		angleMotor = new TalonSRX(angleTalonPort);
 		
 		//																0.00001
-		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 0.005, 0.000005, 0);
+		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 2.0, 0.05, 0);
 		
 		angleMotor.configPeakOutputForward(0.75, 10);
 		angleMotor.configPeakOutputReverse(-0.75, 10);
 		
-		//angleMotor.config_IntegralZone(0, 75000, 10);
+	angleMotor.config_IntegralZone(0, 20, 10);
 		
 		endstop = new DigitalInput(endstopPort);
 		

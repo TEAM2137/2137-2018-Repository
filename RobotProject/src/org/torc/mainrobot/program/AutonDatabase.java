@@ -115,6 +115,10 @@ public class AutonDatabase {
 					ComList.addSequential(new PercDrive_Time(RobotMap.DriveSubsystem, 1250, 0.35));
 					
 					ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
+					
+					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 36, 0.45, 0, true));
+					
+					ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.25, -45, true, false));
 				}
 				break;
 			// Start B

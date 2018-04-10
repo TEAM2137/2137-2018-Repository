@@ -61,12 +61,12 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		angleMotor = new TalonSRX(angleTalonPort);
 		
 		//																0.00001
-		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 2.0, 0.05, 0);
+		MotorControllers.TalonSRXConfig(angleMotor, 10, 0, 0, 0, 5.0, 0.001, 0);
 		
-		angleMotor.configPeakOutputForward(0.75, 10);
-		angleMotor.configPeakOutputReverse(-0.75, 10);
+		angleMotor.configPeakOutputForward(0.95, 10);//0.75
+		angleMotor.configPeakOutputReverse(-0.95, 10);
 		
-	angleMotor.config_IntegralZone(0, 20, 10);
+	angleMotor.config_IntegralZone(0, 120, 10);
 		
 		endstop = new DigitalInput(endstopPort);
 		
@@ -86,7 +86,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 				toReturn = -7;
 				break;
 			case pickup:
-				toReturn = 76; //68
+				toReturn = 78; //76//68
 				break;
 			case flat:
 				toReturn = 68; //60

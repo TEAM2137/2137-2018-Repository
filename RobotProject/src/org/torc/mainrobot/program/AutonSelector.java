@@ -25,11 +25,17 @@ public class AutonSelector {
 		public StartPositions startPos = StartPositions.center;
 		public AutonPriority autonPriority = AutonPriority.sw1tch;
 		public boolean scaleZigBaselineOnly = false;
+		public boolean scaleDo2Cube = true;
+		public boolean scaleDoNull = false;
+		public boolean scaleDo2CubeSpit = true;
 	}
 	
-	public void getAuton() {
+	/**
+	 * @return If the auton get was successful or not.
+	 */
+	public boolean getAuton() {
 		autonList = new CommandList();
-		AutonDatabase.GetAuton(autonList, aData);
+		return AutonDatabase.GetAuton(autonList, aData);
 	}
 	
 	public void startAuton() {
@@ -37,6 +43,9 @@ public class AutonSelector {
 			System.out.println("Cannot start AutonSelector list!!");
 			return;
 		}
+		
+		RobotMap.DriveSubsystem.setShifters(false);
+		
 		autonList.start();
 	}
 
@@ -54,8 +63,14 @@ public class AutonSelector {
 							RobotMap.operatorControl.getButton(RCButtons.autonPriorityUp, GetType.normal));
 		boolean selectDown = (RobotMap.driverControl.getButton(RCButtons.autonPriorityDown, GetType.normal) || 
 							RobotMap.operatorControl.getButton(RCButtons.autonPriorityDown, GetType.normal));
-		boolean selectBaseline = //(RobotMap.driverControl.getButton(RCButtons.autonZigBaseToggle, GetType.pressed) || 
-							RobotMap.operatorControl.getButton(RCButtons.autonZigBaseToggle, GetType.pressed);
+		boolean selectBaseline = (RobotMap.driverControl.getButton(RCButtons.autonZigBaseToggle, GetType.pressed) || 
+								RobotMap.operatorControl.getButton(RCButtons.autonZigBaseToggle, GetType.pressed));
+		boolean select2CScale = (RobotMap.driverControl.getButton(RCButtons.auton2CScaleToggle, GetType.pressed) || 
+								RobotMap.operatorControl.getButton(RCButtons.auton2CScaleToggle, GetType.pressed));
+		boolean select2CScaleSpit = (RobotMap.driverControl.getButton(RCButtons.auton2CScaleSpitToggle, GetType.pressed) || 
+									RobotMap.operatorControl.getButton(RCButtons.auton2CScaleSpitToggle, GetType.pressed));
+		boolean selectNullScale = (RobotMap.driverControl.getButton(RCButtons.autonNullScaleToggle, GetType.pressed) || 
+									RobotMap.operatorControl.getButton(RCButtons.autonNullScaleToggle, GetType.pressed));
 		
 		if (selectLeft || selectRight || selectUp || selectDown) {
 			buttonTime++;
@@ -97,6 +112,16 @@ public class AutonSelector {
 		if (selectBaseline) {
 			aData.scaleZigBaselineOnly = !aData.scaleZigBaselineOnly;
 		}
+		// Select 2C enable
+		if (select2CScale) {
+			aData.scaleDo2Cube = !aData.scaleDo2Cube;
+		}
+		if (select2CScaleSpit) {
+			aData.scaleDo2CubeSpit = !aData.scaleDo2CubeSpit;
+		}
+		if (selectNullScale) {
+			aData.scaleDoNull = !aData.scaleDoNull;
+		}
 		
 		SmartDashboard.putBoolean("AutonSelectLeft", (aData.startPos == StartPositions.left));
 		SmartDashboard.putBoolean("AutonSelectCenter", (aData.startPos == StartPositions.center));
@@ -106,6 +131,9 @@ public class AutonSelector {
 		SmartDashboard.putBoolean("ScalePriority", (aData.autonPriority == AutonPriority.scale));
 		
 		SmartDashboard.putBoolean("ScaleZigBaseline", aData.scaleZigBaselineOnly);
+		SmartDashboard.putBoolean("ScaleDo2Cube", aData.scaleDo2Cube);
+		SmartDashboard.putBoolean("ScaleDo2CubeSpit", aData.scaleDo2CubeSpit);
+		SmartDashboard.putBoolean("ScaleDoNull", aData.scaleDoNull);
 	}
 	
 }

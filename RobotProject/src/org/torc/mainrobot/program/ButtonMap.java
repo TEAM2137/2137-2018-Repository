@@ -19,7 +19,8 @@ public class ButtonMap {
 							elevClimb, elevHigh, toggleShifters, elevStartPickup,
 							grabberSpitSlow, grabberSpitFast, autonSelectRight, 
 							autonSelectLeft, autonPriorityUp, autonPriorityDown,
-							autonZigBaseToggle, hookRelease, rampRelease, 
+							autonZigBaseToggle, auton2CScaleToggle, autonNullScaleToggle,
+							auton2CScaleSpitToggle, hookRelease, rampRelease, 
 							homeGrabber, homeELevator}
 	
 	public enum RCAxis { leftX, leftY, rightX, rightY,
@@ -79,6 +80,15 @@ public class ButtonMap {
 				break;
 			case autonZigBaseToggle:
 				toReturn = getEasyButtonInternal(1, getType);
+				break;
+			case auton2CScaleToggle:
+				toReturn = getEasyButtonInternal(2, getType);
+				break;
+			case auton2CScaleSpitToggle:
+				toReturn = getEasyButtonInternal(3, getType);
+				break;
+			case autonNullScaleToggle:
+				toReturn = getEasyButtonInternal(4, getType);
 				break;
 			case hookRelease:
 				toReturn = getEasyButtonInternal(6, getType);

@@ -27,6 +27,8 @@ public class TeleopMode {
 		RobotMap.ClimbingRamp.closeRamp();
 		
 		RobotMap.DriveSubsystem.setAutonDriving(false);
+		// Set high gear
+		RobotMap.DriveSubsystem.setShifters(false);
 		
 		System.out.println("Is Practice Bot: " + RobotMap.RobInfo.isPracticeBot());
 		

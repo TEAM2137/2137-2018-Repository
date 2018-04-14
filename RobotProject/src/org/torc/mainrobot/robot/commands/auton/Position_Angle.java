@@ -71,7 +71,7 @@ public class Position_Angle extends CLCommand {
 		double offset = (pGain * err) + (errSum * iGain) + (dGain * (gyroVal - dLastPos));
 		
 		// Clamp offset
-		double minClamp = 0.15;
+		double minClamp = 0.20;
 		if (offset > 0) {
 			offset = (offset>=minClamp)?offset:minClamp;
 		}

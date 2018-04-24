@@ -77,8 +77,14 @@ public class Elevator_Teleop extends ControlledStateMachine {
 			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.shooting);
 			operatorInterrupt();
 		}
+		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitDrop, GetType.pressed)) {
+			RobotMap.GrabberSubsystem.setCubeGrip(false);
+			RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.deadDrop);
+			operatorInterrupt();
+		}
 		else if (RobotMap.operatorControl.getButton(RCButtons.grabberSpitFast, GetType.released) || 
-				RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.released)) {
+				RobotMap.operatorControl.getButton(RCButtons.grabberSpitSlow, GetType.released) ||
+				RobotMap.operatorControl.getButton(RCButtons.grabberSpitDrop, GetType.released)) {
 			RobotMap.GrabberSubsystem.setCubeGrip(false);
 			//RobotMap.GrabberSubsystem.setGrabberIntakeSpeed(GrabberSpeeds.none);
 		}

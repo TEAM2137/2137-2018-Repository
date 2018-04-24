@@ -10,19 +10,23 @@ import org.torc.mainrobot.robot.subsystems.UltraGrabber.GrabberPositions;
 
 public class DriveTrain_Teleop extends ControlledStateMachine {
 	
-	private int rampTime = 0;
+	private int lowGearTime = 0;
 	
-	private final int rampWait = 500 / 20;
+	private final int lowGearWait = 100 / 20;
+	
+	private boolean lowShiftLastVal = false;
 	
 	@Override
 	public void execute() {
 		// ez halo drive. ;)
 		RobotMap.DriveSubsystem.haloDrive(-RobotMap.driverControl.getAxis(RCAxis.leftY), RobotMap.driverControl.getAxis(RCAxis.rightX), true);
 		
+		/*
 		// Toggle shifters high/low
 		if (RobotMap.driverControl.getButton(RCButtons.toggleShifters, GetType.pressed)) {
 			RobotMap.DriveSubsystem.setShifters(!RobotMap.DriveSubsystem.getShifters());
 		}
+		*/
 		
 		// Open hook and raise grabber
 		if (RobotMap.driverControl.getButton(RCButtons.hookRelease, GetType.pressed)) {
@@ -36,18 +40,28 @@ public class DriveTrain_Teleop extends ControlledStateMachine {
 			//RobotMap.ElevSubsystem.positionFind(ElevatorPositions.high);
 		}
 		
-		// Open ramp
-		if (RobotMap.driverControl.getButton(RCButtons.rampRelease, GetType.normal)) {
-			rampTime++;
+		boolean shifterLowVal = RobotMap.driverControl.getButton(RCButtons.shiftersLow, GetType.normal);
+		
+		// lowGearHold
+		if (shifterLowVal) {
+			if (lowGearTime != -1) {
+				lowGearTime++;
+			}
 		}
 		else {
-			rampTime = 0;
+			lowGearTime = 0;
 		}
 		
-		if (rampTime >= rampWait) {
-			rampTime = 0;
-			RobotMap.ClimbingRamp.openRamp();
+		if (!shifterLowVal && lowShiftLastVal) {
+			RobotMap.DriveSubsystem.setShifters(false);
 		}
+		
+		if (lowGearTime >= lowGearWait) {
+			lowGearTime = -1;
+			RobotMap.DriveSubsystem.setShifters(true);
+		}
+		
+		lowShiftLastVal = shifterLowVal;
 	}
 	
 }

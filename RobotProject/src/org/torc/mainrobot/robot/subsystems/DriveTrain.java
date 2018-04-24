@@ -253,6 +253,8 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		
 		SmartDashboard.putNumber("rightSpeed", rightMaster.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("leftSpeed", leftMaster.getSelectedSensorVelocity(0));
+		
+		SmartDashboard.putBoolean("lowGear", shifterState);
 	}
 	
 	@Override

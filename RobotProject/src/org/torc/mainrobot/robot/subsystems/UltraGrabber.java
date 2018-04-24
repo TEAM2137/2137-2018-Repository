@@ -3,6 +3,7 @@ package org.torc.mainrobot.robot.subsystems;
 import org.torc.mainrobot.program.RobotMap;
 import org.torc.mainrobot.robot.InheritedPeriodic;
 import org.torc.mainrobot.robot.Robot;
+import org.torc.mainrobot.robot.commands.auton.RampMCSpeed;
 import org.torc.mainrobot.tools.MathExtra;
 import org.torc.mainrobot.tools.MotorControllers;
 
@@ -36,7 +37,7 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 	
 	public enum GrabberPositions { up, flat, pickup, shooting }
 	
-	public enum GrabberSpeeds { none, cubeKeep, pickup, dropping, shooting }
+	public enum GrabberSpeeds { none, cubeKeep, pickup, deadDrop, dropping, shooting }
 	
 	//public final static double angleMult = 4521;
 	public final static double angleMult = 11.3778;
@@ -116,6 +117,9 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 			case dropping:
 				toReturn = 0.5;
 				break;
+			case deadDrop:
+				toReturn = 0.25;
+				break;
 			case shooting:
 				toReturn = 1;
 				break;
@@ -148,9 +152,37 @@ public class UltraGrabber extends Subsystem implements InheritedPeriodic {
 		setGrabberIntakeSpeed(val?GrabberSpeeds.cubeKeep:GrabberSpeeds.none);
 	}
 	
+	private RampMCSpeed rightIntakeRamp;
+	private RampMCSpeed leftIntakeRamp;
+	
 	public void setGrabberIntakeSpeed (GrabberSpeeds speed) {
-		rightMotor.set(GetGrabberSpeeds(speed));
-		leftMotor.set(-GetGrabberSpeeds(speed));
+		if (speed == GrabberSpeeds.deadDrop) {
+			if (rightIntakeRamp != null && rightIntakeRamp.isRunning()) {
+				rightIntakeRamp.cancel();
+				rightIntakeRamp.free();
+			}
+			if (leftIntakeRamp != null && leftIntakeRamp.isRunning()) {
+				leftIntakeRamp.cancel();
+				leftIntakeRamp.free();
+			}
+			rightIntakeRamp = new RampMCSpeed(rightMotor, GetGrabberSpeeds(GrabberSpeeds.deadDrop), 1000);
+			leftIntakeRamp = new RampMCSpeed(leftMotor, -GetGrabberSpeeds(GrabberSpeeds.deadDrop), 1000);
+			
+			rightIntakeRamp.start();
+			leftIntakeRamp.start();
+		}
+		else {
+			if (rightIntakeRamp != null && rightIntakeRamp.isRunning()) {
+				rightIntakeRamp.cancel();
+				rightIntakeRamp.free();
+			}
+			if (leftIntakeRamp != null && leftIntakeRamp.isRunning()) {
+				leftIntakeRamp.cancel();
+				leftIntakeRamp.free();
+			}
+			rightMotor.set(GetGrabberSpeeds(speed));
+			leftMotor.set(-GetGrabberSpeeds(speed));
+		}
 	}
 	
 	/**

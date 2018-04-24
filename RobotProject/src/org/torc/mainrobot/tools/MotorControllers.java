@@ -3,6 +3,8 @@ package org.torc.mainrobot.tools;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.PWMSpeedController;
+
 public class MotorControllers {
 	public static void TalonSRXConfig(TalonSRX talon, int timeoutMs, int slotIdx, int PIDLoopIdx, double kF, double kP, double kI, double kD) {
 		TalonSRXConfigFull(talon, timeoutMs, slotIdx, PIDLoopIdx, kF, kP, kI, kD);
@@ -34,4 +36,5 @@ public class MotorControllers {
 		/* use the low level API to set the quad encoder signal */
         talon.setSelectedSensorPosition(absolutePosition, PIDLoopIdx, timeoutMs);
 	}
+	
 }

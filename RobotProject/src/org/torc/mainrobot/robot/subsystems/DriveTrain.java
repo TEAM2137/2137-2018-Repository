@@ -45,7 +45,7 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	final double quickTurnSensitivity = 0.7;
 	final double speedTurnSensitivity = 0.7;
 	
-	final double voltageRampRateHigh = 0.2;
+	final double voltageRampRateHigh = 0.4;
 	
 	// True is low gear
 	private boolean shifterState = false;
@@ -165,9 +165,13 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 
 		// Halo Driver Control Algorithm
 		if (Math.abs(driverThrottle) < quickTurnConstant) {
+			if (Math.abs(driverWheel) > 0.2) {
+				zeroVRamp();
+			}
 			rightMotorOutput = driverThrottle - driverWheel * quickTurnSensitivity;
 			leftMotorOutput = driverThrottle + driverWheel * quickTurnSensitivity;
 		} else {
+			configVRamp();
 			rightMotorOutput = driverThrottle - Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
 			leftMotorOutput = driverThrottle + Math.abs(driverThrottle) * driverWheel * speedTurnSensitivity;
 		}
@@ -183,19 +187,38 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 		
 	}
 	
+	private void zeroVRamp() {
+		rightMaster.configOpenloopRamp(0, 10);
+		rightSlave.configOpenloopRamp(0, 10);
+		leftMaster.configOpenloopRamp(0, 10);
+		leftSlave.configOpenloopRamp(0, 10);
+		rightMaster.configClosedloopRamp(0, 10);
+		rightSlave.configClosedloopRamp(0, 10);
+		leftMaster.configClosedloopRamp(0, 10);
+		leftSlave.configClosedloopRamp(0, 10);
+	}
+	
 	private void configVRamp() {
 		if (autonDrive) {
 			rightMaster.configOpenloopRamp(0, 10);
 			rightSlave.configOpenloopRamp(0, 10);
 			leftMaster.configOpenloopRamp(0, 10);
 			leftSlave.configOpenloopRamp(0, 10);
+			rightMaster.configClosedloopRamp(0, 10);
+			rightSlave.configClosedloopRamp(0, 10);
+			leftMaster.configClosedloopRamp(0, 10);
+			leftSlave.configClosedloopRamp(0, 10);
 		}
 		else {
-			double kRampVal = shifterState?(voltageRampRateHigh * 3):voltageRampRateHigh;
+			double kRampVal = shifterState?(voltageRampRateHigh * 4):voltageRampRateHigh;
 			rightMaster.configOpenloopRamp(kRampVal, 10);
 			rightSlave.configOpenloopRamp(kRampVal, 10);
 			leftMaster.configOpenloopRamp(kRampVal, 10);
 			leftSlave.configOpenloopRamp(kRampVal, 10);
+			rightMaster.configClosedloopRamp(kRampVal, 10);
+			rightSlave.configClosedloopRamp(kRampVal, 10);
+			leftMaster.configClosedloopRamp(kRampVal, 10);
+			leftSlave.configClosedloopRamp(kRampVal, 10);
 		}
 	}
 	

@@ -109,11 +109,13 @@ public class AutonDatabase {
 					ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 106, 0.50, 0, true));
 					ComList.addSequential(new Position_Angle(RobotMap.DriveSubsystem, 0.25, 62, true, false));
 					
-					ComList.addParallel(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
+					
 					ComList.addParallel(new Elevator_Jog(RobotMap.ElevSubsystem, Elevator.posPerInch * 5));
 																						// 36
 					//ComList.addSequential(new DriveStraight_Angle(RobotMap.DriveSubsystem, 18, 0.25, 0, true));
 					ComList.addSequential(new PercDrive_Time(RobotMap.DriveSubsystem, 1250, 0.35));
+					
+					ComList.addSequential(new UltraGrabber_Angle(RobotMap.GrabberSubsystem, GrabberPositions.shooting));
 					
 					ComList.addSequential(new UltraGrabber_SpitCube(RobotMap.GrabberSubsystem, SpitSpeeds.drop));
 					

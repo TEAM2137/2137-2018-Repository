@@ -61,13 +61,13 @@ public class ButtonMap {
 				toReturn = getEasyButtonInternal(3, getType);
 				break;
 			case grabberSpitDrop:
-				toReturn = getPOVInternal(90, getType);
+				toReturn = getPOVInternal(45, getType) || getPOVInternal(90, getType);
 				break;
 			case grabberSpitSlow:
 				toReturn = getPOVInternal(225, getType) || getPOVInternal(180, getType) || getPOVInternal(135, getType);
 				break;
 			case grabberSpitFast:
-				toReturn = getPOVInternal(315, getType) || getPOVInternal(0, getType) || getPOVInternal(45, getType);
+				toReturn = getPOVInternal(315, getType) || getPOVInternal(0, getType);// || getPOVInternal(45, getType);
 				break;
 			case autonSelectRight:
 				toReturn = getPOVInternal(90, getType);

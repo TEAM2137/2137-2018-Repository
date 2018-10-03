@@ -25,7 +25,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	private DigitalInput endstop;
 	
-	private TalonSRX elevator;
+	private TalonSRX elevator, elevSlave;
 	
 	public final static int maxSoftLimit = RobotMap.RobInfo.isPracticeBot()?28345:26726;//25297;
 	
@@ -40,17 +40,21 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	
 	Elevator_Home elevHomer;
 	
-	public Elevator(int talonPort, int endstopPort) {
+	public Elevator(int talonPort, int talonSlavePort, int endstopPort) {
 		// Add to periodic list
 		org.torc.mainrobot.robot.Robot.AddToPeriodic(this);
 		
 		elevator = new TalonSRX(talonPort);
+		elevSlave = new TalonSRX(talonSlavePort);
 		// Invert motor phase
 		//elevator.setInverted(false);
 		//elevator.setSensorPhase(true);
 		
 		//MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0, 5, 0.01, 0);
 		MotorControllers.TalonSRXConfig(elevator, 10, 0, 0, 0.58, 3, 0.01, 60);
+		// Config the slave as well just in case
+		MotorControllers.TalonSRXConfig(elevSlave, 10, 0, 0, 0.58, 3, 0.01, 60);
+		
 		elevator.config_IntegralZone(0, 300, 10);
 		
 		endstop = new DigitalInput(endstopPort);
@@ -117,7 +121,9 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 	}
 	
 	public void jogElevatorPerc(double controllerVal) {
-		elevator.set(ControlMode.PercentOutput, MathExtra.clamp(controllerVal, (minLimitTripped ? 0 : -1), (maxLimitTripped ? 0 : 1)));
+		double percVal = MathExtra.clamp(controllerVal, (minLimitTripped ? 0 : -1), (maxLimitTripped ? 0 : 1));
+		elevator.set(ControlMode.PercentOutput, percVal);
+		elevSlave.set(ControlMode.PercentOutput, percVal);
 	}
 	
 	public void positionFind(ElevatorPositions position) {
@@ -129,6 +135,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		int targPos = GetElevatorPositions(position);
 		targetPosition = targPos;
 		elevatorPosition = position;
+		elevSlave.set(ControlMode.Follower, elevator.getDeviceID());
 		elevator.set(ControlMode.MotionMagic, MathExtra.clamp(targPos, 0, maxSoftLimit));
 	}
 	
@@ -162,6 +169,7 @@ public class Elevator extends Subsystem implements InheritedPeriodic {
 		}
 		targetPosition += positionInc;
 		targetPosition = MathExtra.clamp(targetPosition, 0, maxSoftLimit);
+		elevSlave.set(ControlMode.Follower, elevator.getDeviceID());
 		elevator.set(ControlMode.MotionMagic, targetPosition);
 	}
 	

@@ -36,7 +36,7 @@ public class RobotMode {
 		
 		RobotMap.DriveSubsystem = new DriveTrain(10, 11, 22, 23, 4);
 		
-		RobotMap.ElevSubsystem = new Elevator(24, 0);		
+		RobotMap.ElevSubsystem = new Elevator(24, 12, 0);		
 		
 		RobotMap.GrabberSubsystem = new UltraGrabber(0, 1, 13, 1, 2, 2);
 		

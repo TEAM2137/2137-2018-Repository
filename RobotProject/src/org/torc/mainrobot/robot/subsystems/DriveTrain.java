@@ -199,6 +199,7 @@ public class DriveTrain extends Subsystem implements InheritedPeriodic {
 	}
 	
 	private void configVRamp() {
+		// If in auton, ramping is expected to be managed by commands, so disable vRamp
 		if (autonDrive) {
 			rightMaster.configOpenloopRamp(0, 10);
 			rightSlave.configOpenloopRamp(0, 10);

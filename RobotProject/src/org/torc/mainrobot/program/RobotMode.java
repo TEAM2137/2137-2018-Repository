@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Trajectory.FitMethod;
 
 //import org.torc.mainrobot.robot.subsystems.DriveTrain;
 
@@ -45,6 +47,8 @@ public class RobotMode {
 		RobotMap.ClimbingHook = new ClimbHook(2);
 		
 		RobotMap.ClimbingRamp = new ClimbRamp(4);
+		
+		RobotMap.TrajConf = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
 	}
 	
 	/**

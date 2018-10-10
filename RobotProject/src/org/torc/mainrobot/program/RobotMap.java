@@ -6,6 +6,8 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 
+import jaci.pathfinder.Trajectory;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -34,5 +36,7 @@ public class RobotMap {
 	public static ClimbHook ClimbingHook;
 	
 	public static RobotInfo RobInfo;
+	
+	public static Trajectory.Config TrajConf;
 	
 }

@@ -12,14 +12,13 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Trajectory.FitMethod;
 
 //import org.torc.mainrobot.robot.subsystems.DriveTrain;
 
 public class RobotMode {
 	/*
 	 * This Function is called when the robot first boots up.
-	 * 
+	 * 																
 	 * Any initialization code necessary for Robot-level access (most/any state),
 	 * should go here.
 	 */

@@ -3,12 +3,12 @@ package org.torc.mainrobot.program;
 import org.torc.mainrobot.robot.subsystems.DriveTrain.DTSide;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.followers.EncoderFollower;
 import jaci.pathfinder.modifiers.TankModifier;
+
 
 public class AutonMode {
 	
